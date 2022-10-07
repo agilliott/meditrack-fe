@@ -1,23 +1,15 @@
+import { Outlet } from "react-router-dom";
 import { Grid } from '@mui/material';
-import { useState } from 'react'
-import { Routes, Route, Link } from "react-router-dom";
 
 import NavBar from './components/NavBar';
-import ErrorPage from "./pages/ErrorPage";
-import Tracker from './pages/Tracker'
 
 function App() {
-
   return (
     <Grid container>
       <Grid item xs={12}>
-        <Routes>
-          <Route index element={<Tracker />} />
-          <Route path="tracker" element={<Tracker />} />
-          <Route path="*" element={<ErrorPage />} />
-        </Routes>
+        <Outlet />
       </Grid>
-      <Grid item xs={!2}>
+      <Grid item xs={12}>
         <NavBar />
       </Grid>
     </Grid>

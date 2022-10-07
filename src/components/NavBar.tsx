@@ -1,27 +1,27 @@
-import * as React from 'react';
-import { NavLink } from "react-router-dom";
-import Paper from '@mui/material/Paper';
-import BottomNavigation from '@mui/material/BottomNavigation';
-import BottomNavigationAction from '@mui/material/BottomNavigationAction';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import InsertChartOutlinedIcon from '@mui/icons-material/InsertChartOutlined';
-import MedicationOutlinedIcon from '@mui/icons-material/MedicationOutlined';
+import { NavLink, useLocation } from "react-router-dom";
+import { Paper, BottomNavigation, BottomNavigationAction } from "@mui/material";
+import { CalendarMonth, InsertChartOutlined, MedicationOutlined } from '@mui/icons-material';
+
+import { routeKeyMap } from "../routing/routes";
 
 const NavBar = () => {
-  const [value, setValue] = React.useState(0);
+  const { pathname } = useLocation();
+  const route = pathname.replace('/', '');
 
   return (
     <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
       <BottomNavigation
         showLabels
-        value={value}
-        onChange={(event, newValue) => {
-          setValue(newValue);
-        }}
+        value={routeKeyMap[route]}
       >
-        <BottomNavigationAction component={NavLink} to="/tracker" label="Tracker" icon={<CalendarMonthIcon />} />
-        <BottomNavigationAction component={NavLink} to="/analysis" label="Analysis" icon={<InsertChartOutlinedIcon />} />
-        <BottomNavigationAction component={NavLink} to="/medication" label="Medication" icon={<MedicationOutlinedIcon />} />
+        <BottomNavigationAction
+          component={NavLink}
+          to="/tracker"
+          label="Tracker"
+          icon={<CalendarMonth />}
+        />
+        <BottomNavigationAction component={NavLink} to="/analyse" label="Analyse" icon={<InsertChartOutlined />} />
+        <BottomNavigationAction component={NavLink} to="/medication" label="Medication" icon={<MedicationOutlined />} />
       </BottomNavigation>
     </Paper>
   );
