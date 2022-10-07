@@ -11,13 +11,7 @@ import { PATH_TRACKER, PATH_ANALYSE, PATH_MEDICATION } from './routing/routes';
 import { Analyse, ErrorPage, Medication, Tracker } from './pages';
 
 import App from './App'
-
-
-const theme = createTheme({
-  palette: {
-    mode: 'dark'
-  }
-});
+import { theme } from './theme'
 
 const router = createBrowserRouter([
   {
