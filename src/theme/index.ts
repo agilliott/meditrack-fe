@@ -10,6 +10,15 @@ const themeOptions: ThemeOptions = {
       main: '#00f5ac',
     },
   },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          minWidth: '45px',
+        },
+      },
+    },
+  },
 };
 
 export const theme = createTheme(themeOptions);

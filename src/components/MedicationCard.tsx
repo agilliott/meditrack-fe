@@ -1,55 +1,151 @@
 import * as React from 'react';
-import { Stack, Accordion, AccordionDetails, AccordionSummary, Typography, TextField, SvgIconProps } from '@mui/material';
-import { Medication, MoreOutlined, PushPinOutlined } from '@mui/icons-material';
+import {
+  Stack,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Typography,
+  TextField,
+  SvgIconProps,
+  CircularProgress,
+  Box,
+  Theme,
+} from '@mui/material';
+import {
+  Medication,
+  MoreOutlined,
+  PushPinOutlined,
+  CheckCircleOutline,
+  ErrorOutline,
+} from '@mui/icons-material';
+
+import NumberIncrementer, { OperatorType } from './NumberIncrementer';
 
 interface Icon extends SvgIconProps {
-  name: string,
+  name: string;
 }
 
 export interface MedicationCardProps {
-  name: string,
-  icon: Icon,
-  amount: number,
+  name: string;
+  icon: Icon;
+  amount: number;
+  incrementSettings: {
+    selectValues: number[];
+    defaultSelectedValue: number;
+  };
 }
 
 const iconMap: { [index: string]: (props: SvgIconProps) => JSX.Element } = {
   MEDICATION: Medication,
   TEST_STRIP: MoreOutlined,
   NEEDLE: PushPinOutlined,
-}
+};
 
 const getIcon = (icon: Icon) => {
   const Component = iconMap[icon.name];
-  return (
-    <Component color={icon.color} />
-  )
-}
+  return <Component color={icon.color} />;
+};
 
-const MedicationCard = ({ name = 'Medication', icon = { name: 'MEDICATION', color: 'primary' }, amount = 0 }: MedicationCardProps) => {
+const MedicationCard = ({
+  name = 'Medication',
+  icon = { name: 'MEDICATION', color: 'primary' },
+  amount = 0,
+  incrementSettings,
+}: MedicationCardProps) => {
+  const [totalAmount, setTotalAmount] = React.useState<number>(amount);
   const [expanded, setExpanded] = React.useState<boolean>(false);
-  const handleExpand = () => { setExpanded(!expanded) };
+
+  // Add hook for data fetch
+  // Sort select values
+  const error: boolean = false;
+  const loading: boolean = false;
+  const success: boolean = false;
+
+  const handleExpand = () => {
+    setExpanded(!expanded);
+  };
+
+  const handleAmountChange = (value: number, operator: OperatorType) => {
+    if (operator === 'ADD') {
+      setTotalAmount(totalAmount + value);
+    } else {
+      const subtractedAmount = totalAmount - value;
+      setTotalAmount(subtractedAmount < 0 ? 0 : subtractedAmount);
+    }
+  };
+
+  const handleBlur = (value: string) => {
+    if (value === '') {
+      setTotalAmount(0);
+    }
+  };
 
   return (
     <div>
       <Accordion expanded={expanded} elevation={3}>
-        <AccordionSummary>
-          <Stack direction="row" spacing={2} sx={{ width: '75%', flexShrink: 0, margin: 'auto 0' }} onClick={handleExpand}>
+        <AccordionSummary
+          onClick={(e) => e.preventDefault}
+          sx={{
+            '&.Mui-focusVisible': {
+              backgroundColor: 'transparent',
+            },
+          }}
+        >
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{ width: '70%', flexShrink: 0, margin: 'auto 0' }}
+            onClick={handleExpand}
+          >
             {getIcon(icon)}
-            <Typography>
-              {name}
-            </Typography>
+            <Typography>{name}</Typography>
           </Stack>
-          <TextField variant="outlined" type="number" defaultValue={amount} inputProps={{ sx: { textAlign: 'center' } }} />
+          <Stack
+            direction="row"
+            spacing={1}
+            justifyContent="flex-end"
+            sx={{ width: '30%', flexShrink: 0, margin: 'auto 0' }}
+          >
+            {success && (
+              <CheckCircleOutline color="success" sx={{ margin: 'auto' }} />
+            )}
+            {error && <ErrorOutline color="error" sx={{ margin: 'auto' }} />}
+            {loading && (
+              <Box m="auto" pt="5px">
+                <CircularProgress color="inherit" size={20} />
+              </Box>
+            )}
+            <TextField
+              variant="outlined"
+              type="number"
+              value={totalAmount || ''}
+              onBlur={(e) => {
+                handleBlur(e.target.value);
+              }}
+              onChange={(e) => setTotalAmount(Number(e.target.value))}
+              sx={{ width: 55 }}
+              inputProps={{
+                sx: {
+                  textAlign: 'center',
+                  border: 'none',
+                  backgroundColor: (theme: Theme) =>
+                    theme.palette.background.default,
+                },
+              }}
+            />
+          </Stack>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography>
-            Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat.
-            Aliquam eget maximus est, id dignissim quam.
-          </Typography>
+          <NumberIncrementer
+            selectValues={incrementSettings.selectValues}
+            defaultSelectedValue={incrementSettings.defaultSelectedValue}
+            increment={{ callback: handleAmountChange }}
+            decrement={{ callback: handleAmountChange }}
+          />
         </AccordionDetails>
       </Accordion>
     </div>
   );
-}
+};
 
 export default MedicationCard;
