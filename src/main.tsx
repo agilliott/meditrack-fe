@@ -5,7 +5,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
 import { PATH_TRACKER, PATH_ANALYSE, PATH_MEDICATION } from './routing/routes';
-import { Analyse, ErrorPage, Medication, Tracker } from './pages';
+import { Analyse, ErrorPage, Login, Medication, Tracker } from './pages';
 
 import App from './App';
 import { theme } from './theme';
@@ -29,6 +29,10 @@ const router = createBrowserRouter([
         element: <Medication />,
       },
     ],
+  },
+  {
+    path: 'login',
+    element: <Login />,
   },
 ]);
 
