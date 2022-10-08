@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material';
-import { MedicationCard } from '../components';
+import { DayNavigation, MedicationCard } from '../components';
 import { MedicationCardProps } from '../components/MedicationCard';
 
 const mockData: MedicationCardProps[] = [
@@ -44,8 +44,12 @@ const mockData: MedicationCardProps[] = [
 const Tracker = () => {
   return (
     <Grid container spacing={2} padding={2}>
-      <Grid item xs={12}>
-        Tracker
+      <Grid item xs={12} textAlign="center">
+        <DayNavigation
+          selectedDate={new Date()}
+          prevCallback={() => {}}
+          nextCallback={() => {}}
+        />
       </Grid>
       {mockData.map((item) => (
         <Grid item xs={12} key={item.name}>
