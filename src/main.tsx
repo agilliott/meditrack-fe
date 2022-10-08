@@ -1,21 +1,18 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
 import { PATH_TRACKER, PATH_ANALYSE, PATH_MEDICATION } from './routing/routes';
 import { Analyse, ErrorPage, Medication, Tracker } from './pages';
 
-import App from './App'
-import { theme } from './theme'
+import App from './App';
+import { theme } from './theme';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <App />,
     errorElement: <ErrorPage />,
     children: [
@@ -31,7 +28,7 @@ const router = createBrowserRouter([
         path: PATH_MEDICATION,
         element: <Medication />,
       },
-    ]
+    ],
   },
 ]);
 
@@ -42,4 +39,4 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <RouterProvider router={router} />
     </ThemeProvider>
   </React.StrictMode>
-)
+);

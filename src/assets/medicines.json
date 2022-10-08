@@ -1,62 +1,46 @@
 [
-    {
-        "id": 1,
-        "title": "Novofine 6mm",
-        "category": "Needles",
-        "icon": {
-            "key": "NEEDLES",
-            "colour": "#12AA73"
-        },
-        "quantity": 2,
-        "increments": [
-            1,
-            2,
-            3
-        ]
+  {
+    "id": 1,
+    "title": "Novofine 6mm",
+    "category": "Needles",
+    "icon": {
+      "key": "NEEDLES",
+      "colour": "#12AA73"
     },
-    {
-        "id": 2,
-        "title": "Contor Next",
-        "category": "Test strips",
-        "icon": {
-            "key": "TEST_STRIPS",
-            "colour": "#C54545"
-        },
-        "quantity": 3,
-        "increments": [
-            1,
-            2,
-            3
-        ]
+    "quantity": 2,
+    "increments": [1, 2, 3]
+  },
+  {
+    "id": 2,
+    "title": "Contor Next",
+    "category": "Test strips",
+    "icon": {
+      "key": "TEST_STRIPS",
+      "colour": "#C54545"
     },
-    {
-        "id": 3,
-        "title": "NovoRapid",
-        "category": "Insulin",
-        "icon": {
-            "key": "INSULIN",
-            "colour": "#4353E0"
-        },
-        "quantity": 23,
-        "increments": [
-            1,
-            5,
-            10
-        ]
+    "quantity": 3,
+    "increments": [1, 2, 3]
+  },
+  {
+    "id": 3,
+    "title": "NovoRapid",
+    "category": "Insulin",
+    "icon": {
+      "key": "INSULIN",
+      "colour": "#4353E0"
     },
-    {
-        "id": 4,
-        "title": "Levemir",
-        "category": "Insulin",
-        "icon": {
-            "key": "INSULIN",
-            "colour": "#4353E0"
-        },
-        "quantity": 14,
-        "increments": [
-            1,
-            5,
-            10
-        ]
-    }
+    "quantity": 23,
+    "increments": [1, 5, 10]
+  },
+  {
+    "id": 4,
+    "title": "Levemir",
+    "category": "Insulin",
+    "icon": {
+      "key": "INSULIN",
+      "colour": "#4353E0"
+    },
+    "quantity": 14,
+    "increments": [1, 5, 10]
+  }
 ]
