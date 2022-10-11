@@ -3,8 +3,8 @@ import { redirect } from 'react-router-dom';
 import apiClient from '../api/client';
 
 const Login = (props) => {
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [email, setEmail] = React.useState('admin@test.com');
+  const [password, setPassword] = React.useState('password');
   const [toHome, setToHome] = React.useState(false);
   const [authError, setAuthError] = React.useState(false);
   const [unknownError, setUnknownError] = React.useState(false);
@@ -12,27 +12,28 @@ const Login = (props) => {
     e.preventDefault();
     setAuthError(false);
     setUnknownError(false);
-    apiClient.get('/sanctum/csrf-cookie').then((response) => {
-      apiClient
-        .post('/login', {
-          email: email,
-          password: password,
-        })
-        .then((response) => {
-          if (response.status === 204) {
-            props.login();
-            setToHome(true);
-          }
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 422) {
-            setAuthError(true);
-          } else {
-            setUnknownError(true);
-            console.error(error);
-          }
-        });
-    });
+    apiClient
+      .post('/sanctum/token', {
+        email: email,
+        password: password,
+        device_name: 'meditrack-fe',
+      })
+      .then((response) => {
+        console.log(response);
+
+        if (response.status === 204) {
+          props.login();
+          setToHome(true);
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 422) {
+          setAuthError(true);
+        } else {
+          setUnknownError(true);
+          console.error(error);
+        }
+      });
   };
   // if (toHome === true) {
   //   return <Redirect to='/' />
