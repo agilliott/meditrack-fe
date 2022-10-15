@@ -1,3 +1,4 @@
+import { Grid, Typography } from '@mui/material';
 import { useRouteError } from 'react-router-dom';
 
 export default function ErrorPage() {
@@ -5,12 +6,14 @@ export default function ErrorPage() {
   console.error(error);
 
   return (
-    <div id="error-page">
-      <h1>Oops!</h1>
-      <p>Sorry, an unexpected error has occurred.</p>
-      <p>
-        <i>{error.statusText || error.message}</i>
-      </p>
-    </div>
+    <Grid container padding={2}>
+      <Grid item xs={12}>
+        <Typography variant="h1">Oops!</Typography>
+        <Typography>Sorry, an unexpected error has occurred.</Typography>
+        <Typography variant="overline">
+          {error.statusText || error.message}
+        </Typography>
+      </Grid>
+    </Grid>
   );
 }

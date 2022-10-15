@@ -27,7 +27,7 @@ interface Icon extends SvgIconProps {
 
 export interface MedicationCardProps {
   name: string;
-  icon: Icon;
+  icon?: Icon;
   amount: number;
   incrementSettings: {
     selectValues: number[];
