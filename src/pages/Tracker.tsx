@@ -20,7 +20,7 @@ interface TrackerData {
 }
 
 const transformTrackerData = (data: TrackerData): MedicationCardProps => {
-  // TODO: Use the increments when returns as an array
+  // TODO: Use the increments when returns as an array and sort them
   // Figure out the icon symantics. Icon name + icon color 'blue1' etc.
   // Updated date
   return {

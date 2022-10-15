@@ -55,8 +55,9 @@ const MedicationCard = ({
   const [totalAmount, setTotalAmount] = React.useState<number>(amount);
   const [expanded, setExpanded] = React.useState<boolean>(false);
 
-  // Add hook for data fetch
-  // Sort select values
+  // TODO: post on debounced change
+  // Fix icon alignment
+
   const error: boolean = false;
   const loading: boolean = false;
   const success: boolean = false;
