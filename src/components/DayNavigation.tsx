@@ -41,6 +41,7 @@ const DayNavigation = ({
           </Box>
         </Grid>
         <Grid
+          item
           xs={8}
           padding={1}
           sx={{

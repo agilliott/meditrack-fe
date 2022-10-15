@@ -1,4 +1,5 @@
 import { Grid } from '@mui/material';
+import useFetchData from '../hooks/useFetchData';
 import { DayNavigation, MedicationCard } from '../components';
 import { MedicationCardProps } from '../components/MedicationCard';
 
@@ -42,6 +43,10 @@ const mockData: MedicationCardProps[] = [
 ];
 
 const Tracker = () => {
+  const { data, loading, error } = useFetchData('/tracker');
+
+  console.log({ data, loading, error });
+
   return (
     <Grid container spacing={2} padding={2}>
       <Grid item xs={12} textAlign="center">

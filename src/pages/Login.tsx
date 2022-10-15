@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import {
   Grid,
@@ -9,6 +10,9 @@ import {
   Box,
   Alert,
 } from '@mui/material';
+
+import useAuth from '../hooks/useAuth';
+import { PATH_TRACKER } from '../routing/routes';
 import apiClient from '../api/client';
 
 type Inputs = {
@@ -17,37 +21,42 @@ type Inputs = {
 };
 
 const Login = () => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<Inputs>();
-
+  const navigate = useNavigate();
+  const { onLogin } = useAuth();
   const [authError, setAuthError] = React.useState(false);
   const [unknownError, setUnknownError] = React.useState(false);
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    apiClient
-      .post('/sanctum/token', {
-        email: data.email,
-        password: data.password,
-        device_name: 'meditrack-fe',
-      })
-      .then((response) => {
-        console.log(response);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Inputs>();
 
-        if (response.status === 204) {
-          // set as logged in and redirect
-        }
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 422) {
-          setAuthError(true);
-        } else {
-          setUnknownError(true);
-        }
-      });
+  // if already logged in, redirect to tracker
+
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    apiClient.get('sanctum/csrf-cookie').then(() => {
+      apiClient
+        .post('/login', {
+          email: data.email,
+          password: data.password,
+        })
+        .then((response) => {
+          if (response.status === 204) {
+            onLogin && onLogin();
+          }
+        })
+        .then(() => {
+          navigate(`/${PATH_TRACKER}`);
+        })
+        .catch((error) => {
+          if (error.response && error.response.status === 422) {
+            setAuthError(true);
+          } else {
+            setUnknownError(true);
+          }
+        });
+    });
   };
 
   return (

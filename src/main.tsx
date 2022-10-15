@@ -4,9 +4,22 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import { PATH_TRACKER, PATH_ANALYSE, PATH_MEDICATION } from './routing/routes';
-import { Analyse, ErrorPage, Login, Medication, Tracker } from './pages';
+import {
+  PATH_TRACKER,
+  PATH_ANALYSE,
+  PATH_MEDICATION,
+  PATH_PROFILE,
+} from './routing/routes';
+import {
+  Analyse,
+  ErrorPage,
+  Login,
+  Medication,
+  Profile,
+  Tracker,
+} from './pages';
 
+import AuthProvider from './context/AuthProvider';
 import App from './App';
 import { theme } from './theme';
 
@@ -28,6 +41,10 @@ const router = createBrowserRouter([
         path: PATH_MEDICATION,
         element: <Medication />,
       },
+      {
+        path: PATH_PROFILE,
+        element: <Profile />,
+      },
     ],
   },
   {
@@ -38,9 +55,11 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </AuthProvider>
   </React.StrictMode>
 );

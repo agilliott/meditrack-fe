@@ -4,6 +4,7 @@ import {
   CalendarMonth,
   InsertChartOutlined,
   MedicationOutlined,
+  Person2Outlined,
 } from '@mui/icons-material';
 
 import { routeKeyMap } from '../routing/routes';
@@ -35,6 +36,12 @@ const NavBar = () => {
           to="/medication"
           label="Medication"
           icon={<MedicationOutlined />}
+        />
+        <BottomNavigationAction
+          component={NavLink}
+          to="/profile"
+          label="Profile"
+          icon={<Person2Outlined />}
         />
       </BottomNavigation>
     </Paper>
