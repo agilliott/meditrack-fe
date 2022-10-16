@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import {
@@ -13,16 +13,15 @@ import {
 
 import useAuth from '../hooks/useAuth';
 import { PATH_TRACKER } from '../routing/routes';
-import apiClient from '../api/client';
 
-type Inputs = {
+export type LoginInputs = {
   email: string;
   password: string;
 };
 
 const Login = () => {
   const navigate = useNavigate();
-  const { onLogin } = useAuth();
+  const { onLogin, loggedIn, loading } = useAuth();
   const [authError, setAuthError] = React.useState(false);
   const [unknownError, setUnknownError] = React.useState(false);
 
@@ -30,34 +29,17 @@ const Login = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>();
+  } = useForm<LoginInputs>();
 
-  // if already logged in, redirect to tracker
-
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    apiClient.get('sanctum/csrf-cookie').then(() => {
-      apiClient
-        .post('/login', {
-          email: data.email,
-          password: data.password,
-        })
-        .then((response) => {
-          if (response.status === 204) {
-            onLogin && onLogin();
-          }
-        })
-        .then(() => {
-          navigate(`/${PATH_TRACKER}`);
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 422) {
-            setAuthError(true);
-          } else {
-            setUnknownError(true);
-          }
-        });
-    });
+  const onSubmit: SubmitHandler<LoginInputs> = (data) => {
+    onLogin(data);
   };
+
+  useEffect(() => {
+    if (loggedIn && !loading) {
+      navigate(`/${PATH_TRACKER}`);
+    }
+  }, [loggedIn, loading]);
 
   return (
     <Grid
@@ -98,6 +80,9 @@ const Login = () => {
                   <TextField
                     type="email"
                     label="Email"
+                    inputProps={{
+                      autoComplete: 'username',
+                    }}
                     error={!!errors?.email}
                     helperText={!!errors?.email && 'Required'}
                     fullWidth
@@ -108,6 +93,9 @@ const Login = () => {
                   <TextField
                     type="password"
                     label="Password"
+                    inputProps={{
+                      autoComplete: 'current-password',
+                    }}
                     error={!!errors?.password}
                     helperText={!!errors?.password && 'Required'}
                     fullWidth

@@ -9,10 +9,10 @@ export default function ErrorPage() {
     <Grid container padding={2}>
       <Grid item xs={12}>
         <Typography variant="h1">Oops!</Typography>
-        <Typography>Sorry, an unexpected error has occurred.</Typography>
-        <Typography variant="overline">
-          {error.statusText || error.message}
+        <Typography variant="h2">
+          Sorry, an unexpected error has occurred.
         </Typography>
+        <Typography>{error.statusText || error.message}</Typography>
       </Grid>
     </Grid>
   );

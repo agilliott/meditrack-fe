@@ -7,14 +7,14 @@ import { PATH_LOGIN } from './routing/routes';
 import { useEffect } from 'react';
 
 function App() {
-  const { isAuthenticated } = useAuth();
+  const { loading, loggedIn } = useAuth();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     navigate(`/${PATH_LOGIN}`);
-  //   }
-  // }, [isAuthenticated]);
+  useEffect(() => {
+    if (!loading && !loggedIn) {
+      navigate(`/${PATH_LOGIN}`);
+    }
+  }, [loggedIn, loading]);
 
   return (
     <Grid container justifyContent="center" sx={{ minWidth: '340px' }}>

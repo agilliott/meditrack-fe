@@ -116,7 +116,7 @@ const MedicationCard = ({
               onChange={(e) => setTotalAmount(Number(e.target.value))}
               sx={{ width: 55 }}
               inputProps={{
-                inputmode: 'numeric',
+                inputMode: 'numeric',
                 sx: {
                   textAlign: 'center',
                   border: 'none',

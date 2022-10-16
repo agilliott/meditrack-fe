@@ -19,7 +19,7 @@ import {
   Tracker,
 } from './pages';
 
-import AuthProvider from './context/AuthProvider';
+import { AuthProvider } from './context/AuthProvider';
 import App from './App';
 import { theme } from './theme';
 
