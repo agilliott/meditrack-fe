@@ -118,14 +118,14 @@ const MedicationCard = ({
             )}
             <TextField
               variant="outlined"
-              type="number"
-              value={totalAmount || ''}
+              value={totalAmount}
               onBlur={(e) => {
                 handleBlur(e.target.value);
               }}
               onChange={(e) => setTotalAmount(Number(e.target.value))}
               sx={{ width: 55 }}
               inputProps={{
+                inputmode: 'numeric',
                 sx: {
                   textAlign: 'center',
                   border: 'none',
