@@ -75,12 +75,6 @@ const MedicationCard = ({
     }
   };
 
-  const handleBlur = (value: string) => {
-    if (value === '') {
-      setTotalAmount(0);
-    }
-  };
-
   return (
     <div>
       <Accordion expanded={expanded} elevation={3}>
@@ -119,9 +113,6 @@ const MedicationCard = ({
             <TextField
               variant="outlined"
               value={totalAmount}
-              onBlur={(e) => {
-                handleBlur(e.target.value);
-              }}
               onChange={(e) => setTotalAmount(Number(e.target.value))}
               sx={{ width: 55 }}
               inputProps={{
