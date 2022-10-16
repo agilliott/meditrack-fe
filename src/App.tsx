@@ -17,7 +17,7 @@ function App() {
   // }, [isAuthenticated]);
 
   return (
-    <Grid container justifyContent="center">
+    <Grid container justifyContent="center" sx={{ minWidth: '340px' }}>
       <Grid item xs={12}>
         <Outlet />
       </Grid>
