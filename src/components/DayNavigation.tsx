@@ -4,18 +4,24 @@ import { format, isToday } from 'date-fns';
 
 interface DayNavgationProps {
   selectedDate: Date;
+  hitPrevLimit: boolean;
+  hitNextLimit: boolean;
   prevCallback: () => void;
   nextCallback: () => void;
 }
 
 const DayNavigation = ({
   selectedDate = new Date(),
+  hitPrevLimit,
+  hitNextLimit,
   prevCallback,
   nextCallback,
 }: DayNavgationProps) => {
   const isDateToday = isToday(selectedDate);
   const day = isDateToday ? 'Today' : format(selectedDate, 'eeee');
   const title = format(selectedDate, 'PPP');
+
+  console.log({ hitPrevLimit, hitNextLimit });
 
   return (
     <Paper
@@ -27,11 +33,12 @@ const DayNavigation = ({
     >
       <Grid container justifyContent="space-between">
         <Grid item>
-          <IconButton aria-label="Previous day" onClick={prevCallback}>
-            <ArrowBackIosNew
-              fontSize="large"
-              sx={{ color: (theme) => theme.palette.common.white }}
-            />
+          <IconButton
+            aria-label="Previous day"
+            onClick={prevCallback}
+            disabled={hitPrevLimit}
+          >
+            <ArrowBackIosNew fontSize="large" />
           </IconButton>
         </Grid>
         <Grid
@@ -55,11 +62,12 @@ const DayNavigation = ({
           </Typography>
         </Grid>
         <Grid item>
-          <IconButton aria-label="Next day" onClick={nextCallback}>
-            <ArrowForwardIos
-              fontSize="large"
-              sx={{ color: (theme) => theme.palette.common.white }}
-            />
+          <IconButton
+            aria-label="Next day"
+            onClick={nextCallback}
+            disabled={hitNextLimit}
+          >
+            <ArrowForwardIos fontSize="large" />
           </IconButton>
         </Grid>
       </Grid>

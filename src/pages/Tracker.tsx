@@ -1,5 +1,5 @@
 import { Grid, Skeleton, Typography } from '@mui/material';
-import { format } from 'date-fns';
+import { format, add, sub, isToday, isSameDay } from 'date-fns';
 import VaccinesIcon from '@mui/icons-material/Vaccines';
 
 import useFetchData from '../hooks/useFetchData';
@@ -40,10 +40,30 @@ const Tracker = () => {
   const [selectedDay, setSelectedDay] = useState<string>(
     format(new Date(), 'yyyy-MM-dd')
   );
+  const [isNextLimit, setIsNextLimit] = useState<boolean>(false);
+  const [isPrevLimit, setIsPrevLimit] = useState<boolean>(false);
+
   const { data, loading, error } = useFetchData('/tracker');
   const [medicationsForToday, setMedicationsForToday] = useState<
     MedicationCardProps[] | null
   >(null);
+
+  const prevDayClick = () => {
+    const prevDay = sub(new Date(selectedDay), { days: 1 });
+    setSelectedDay(format(prevDay, 'yyyy-MM-dd'));
+  };
+  const nextDayClick = () => {
+    const nextDay = add(new Date(selectedDay), { days: 1 });
+    setSelectedDay(format(nextDay, 'yyyy-MM-dd'));
+  };
+
+  useEffect(() => {
+    const isDateToday = isToday(new Date(selectedDay));
+    const lastWeek = sub(new Date(), { days: 7 });
+    const is7DaysAgo = isSameDay(lastWeek, new Date(selectedDay));
+    setIsNextLimit(isDateToday);
+    setIsPrevLimit(is7DaysAgo);
+  }, [selectedDay]);
 
   useEffect(() => {
     if (data?.[selectedDay]) {
@@ -58,9 +78,11 @@ const Tracker = () => {
     <Grid container spacing={2} padding={2} mb="55px">
       <Grid item xs={12} textAlign="center">
         <DayNavigation
-          selectedDate={new Date()}
-          prevCallback={() => {}}
-          nextCallback={() => {}}
+          selectedDate={new Date(selectedDay)}
+          hitPrevLimit={isPrevLimit}
+          hitNextLimit={isNextLimit}
+          prevCallback={prevDayClick}
+          nextCallback={nextDayClick}
         />
       </Grid>
       {loading && (
@@ -83,7 +105,7 @@ const Tracker = () => {
       {!loading &&
         medicationsForToday &&
         medicationsForToday.map((item) => (
-          <Grid item xs={12} key={item.name}>
+          <Grid item xs={12} key={`${selectedDay}-${item.name}`}>
             <MedicationCard {...item} />
           </Grid>
         ))}
