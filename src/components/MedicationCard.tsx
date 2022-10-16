@@ -62,6 +62,9 @@ const MedicationCard = ({
   const loading: boolean = false;
   const success: boolean = false;
 
+  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) =>
+    event.target.select();
+
   const handleExpand = () => {
     setExpanded(!expanded);
   };
@@ -113,6 +116,7 @@ const MedicationCard = ({
             <TextField
               variant="outlined"
               value={totalAmount}
+              onFocus={handleFocus}
               onChange={(e) => setTotalAmount(Number(e.target.value))}
               sx={{ width: 55 }}
               inputProps={{
