@@ -1,6 +1,6 @@
-import { Grid, Skeleton, Typography } from '@mui/material';
+import { Fab, Grid, Skeleton, Typography } from '@mui/material';
 import { format, add, sub, isToday, isSameDay } from 'date-fns';
-import VaccinesIcon from '@mui/icons-material/Vaccines';
+import { Vaccines, LastPage } from '@mui/icons-material';
 
 import useFetchData from '../hooks/useFetchData';
 import { DayNavigation, MedicationCard } from '../components';
@@ -57,10 +57,14 @@ const Tracker = () => {
     setSelectedDay(format(nextDay, 'yyyy-MM-dd'));
   };
 
+  const skipToTodayClick = () => {
+    setSelectedDay(format(new Date(), 'yyyy-MM-dd'));
+  };
+
+  const isDateToday = isToday(new Date(selectedDay));
+  const lastWeek = sub(new Date(), { days: 7 });
+  const is7DaysAgo = isSameDay(lastWeek, new Date(selectedDay));
   useEffect(() => {
-    const isDateToday = isToday(new Date(selectedDay));
-    const lastWeek = sub(new Date(), { days: 7 });
-    const is7DaysAgo = isSameDay(lastWeek, new Date(selectedDay));
     setIsNextLimit(isDateToday);
     setIsPrevLimit(is7DaysAgo);
   }, [selectedDay]);
@@ -75,7 +79,7 @@ const Tracker = () => {
   }, [data, selectedDay]);
 
   return (
-    <Grid container spacing={2} padding={2} mb="55px">
+    <Grid container spacing={2} padding={2} mb={isDateToday ? '55px' : '120px'}>
       <Grid item xs={12} textAlign="center">
         <DayNavigation
           selectedDate={new Date(selectedDay)}
@@ -95,7 +99,7 @@ const Tracker = () => {
       {!medicationsForToday && (
         <Grid item xs={12} textAlign="center" sx={{ marginTop: '30vh' }}>
           <Box>
-            <VaccinesIcon fontSize="large" />
+            <Vaccines fontSize="large" />
           </Box>
           <Typography variant="caption">
             No medications listed for today
@@ -109,6 +113,18 @@ const Tracker = () => {
             <MedicationCard {...item} />
           </Grid>
         ))}
+      {!isDateToday && (
+        <Grid item xs={12}>
+          <Fab
+            onClick={skipToTodayClick}
+            color="primary"
+            aria-label="Skip to today"
+            sx={{ position: 'fixed', bottom: '70px', right: '20px' }}
+          >
+            <LastPage />
+          </Fab>
+        </Grid>
+      )}
     </Grid>
   );
 };
