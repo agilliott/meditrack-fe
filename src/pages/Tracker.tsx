@@ -1,6 +1,6 @@
-import { Fab, Grid, Skeleton, Typography } from '@mui/material';
+import { Fab, Fade, Grid, Skeleton, Typography } from '@mui/material';
 import { format, add, sub, isToday, isSameDay } from 'date-fns';
-import { Vaccines, LastPage } from '@mui/icons-material';
+import { Vaccines, LastPage, ErrorOutline } from '@mui/icons-material';
 
 import useFetchData from '../hooks/useFetchData';
 import { DayNavigation, MedicationCard } from '../components';
@@ -32,9 +32,6 @@ const transformTrackerData = (data: TrackerData): MedicationCardProps => {
     },
   };
 };
-
-// TODO: Day navigation function
-// Do not allow going beyong today, do not allow going back more than 7 days
 
 const Tracker = () => {
   const [selectedDay, setSelectedDay] = useState<string>(
@@ -96,6 +93,16 @@ const Tracker = () => {
           <Skeleton height={120} />
         </Grid>
       )}
+      {error && (
+        <Grid item xs={12} textAlign="center" sx={{ marginTop: '30vh' }}>
+          <Box>
+            <ErrorOutline fontSize="large" />
+          </Box>
+          <Typography variant="caption">
+            There has been a problem loading medications
+          </Typography>
+        </Grid>
+      )}
       {!medicationsForToday && (
         <Grid item xs={12} textAlign="center" sx={{ marginTop: '30vh' }}>
           <Box>
@@ -110,7 +117,9 @@ const Tracker = () => {
         medicationsForToday &&
         medicationsForToday.map((item) => (
           <Grid item xs={12} key={`${selectedDay}-${item.name}`}>
+            {/* <Fade> */}
             <MedicationCard {...item} />
+            {/* </Fade> */}
           </Grid>
         ))}
       {!isDateToday && (

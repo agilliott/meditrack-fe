@@ -21,8 +21,6 @@ const DayNavigation = ({
   const day = isDateToday ? 'Today' : format(selectedDate, 'eeee');
   const title = format(selectedDate, 'PPP');
 
-  console.log({ hitPrevLimit, hitNextLimit });
-
   return (
     <Paper
       elevation={3}

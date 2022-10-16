@@ -10,6 +10,7 @@ export default function useFetchData(url: string) {
 
   useEffect(() => {
     setLoading(true);
+    setError(null);
 
     if (controllerRef.current) {
       controllerRef.current.abort();
