@@ -27,8 +27,8 @@ const transformTrackerData = (data: TrackerData): MedicationCardProps => {
     name: data.title,
     amount: data.quantity,
     incrementSettings: {
-      selectValues: [1, 3, 5],
-      defaultSelectedValue: 1,
+      selectValues: data.increments,
+      defaultSelectedValue: data.increments[0],
     },
   };
 };
@@ -38,7 +38,7 @@ const transformTrackerData = (data: TrackerData): MedicationCardProps => {
 
 const Tracker = () => {
   const [selectedDay, setSelectedDay] = useState<string>(
-    format(new Date('2022-10-8'), 'yyyy-MM-dd')
+    format(new Date(), 'yyyy-MM-dd')
   );
   const { data, loading, error } = useFetchData('/tracker');
   const [medicationsForToday, setMedicationsForToday] = useState<
