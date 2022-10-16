@@ -1,4 +1,4 @@
-import { Fab, Fade, Grid, Skeleton, Typography } from '@mui/material';
+import { Fab, Grid, Skeleton, Typography } from '@mui/material';
 import { format, add, sub, isToday, isSameDay } from 'date-fns';
 import { Vaccines, LastPage, ErrorOutline } from '@mui/icons-material';
 
@@ -26,6 +26,7 @@ const transformTrackerData = (data: TrackerData): MedicationCardProps => {
   return {
     name: data.title,
     amount: data.quantity,
+    id: data.id || undefined,
     incrementSettings: {
       selectValues: data.increments,
       defaultSelectedValue: data.increments[0],
@@ -103,7 +104,7 @@ const Tracker = () => {
           </Typography>
         </Grid>
       )}
-      {!medicationsForToday && (
+      {!medicationsForToday && !loading && (
         <Grid item xs={12} textAlign="center" sx={{ marginTop: '30vh' }}>
           <Box>
             <Vaccines fontSize="large" />
@@ -116,10 +117,12 @@ const Tracker = () => {
       {!loading &&
         medicationsForToday &&
         medicationsForToday.map((item) => (
-          <Grid item xs={12} key={`${selectedDay}-${item.name}`}>
-            {/* <Fade> */}
+          <Grid
+            item
+            xs={12}
+            key={item.id ? item.id : `${selectedDay}-${item.name}`}
+          >
             <MedicationCard {...item} />
-            {/* </Fade> */}
           </Grid>
         ))}
       {!isDateToday && (

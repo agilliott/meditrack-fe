@@ -23,7 +23,9 @@ export default function useFetchData(url: string) {
       .get(url, { signal: controllerRef.current?.signal })
       .then((response) => response.data)
       .then(setData)
-      .catch(setError)
+      .catch((err) => {
+        if (err.code !== 'ERR_CANCELED') setError(err);
+      })
       .finally(() => {
         setLoading(false);
         controllerRef.current = null;

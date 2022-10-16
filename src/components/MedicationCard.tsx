@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import {
   Stack,
   Accordion,
@@ -29,6 +29,7 @@ export interface MedicationCardProps {
   name: string;
   icon?: Icon;
   amount: number;
+  id?: number;
   incrementSettings: {
     selectValues: number[];
     defaultSelectedValue: number;
@@ -52,8 +53,8 @@ const MedicationCard = ({
   amount = 0,
   incrementSettings,
 }: MedicationCardProps) => {
-  const [totalAmount, setTotalAmount] = React.useState<number>(amount);
-  const [expanded, setExpanded] = React.useState<boolean>(false);
+  const [totalAmount, setTotalAmount] = useState<number>(amount);
+  const [expanded, setExpanded] = useState<boolean>(false);
 
   // TODO: post on debounced change
   // Fix icon alignment
