@@ -1,5 +1,5 @@
 import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Grid, Paper, Typography, IconButton } from '@mui/material';
 import { format, isToday } from 'date-fns';
 
 interface DayNavgationProps {
@@ -26,19 +26,13 @@ const DayNavigation = ({
       }}
     >
       <Grid container justifyContent="space-between">
-        <Grid item padding={1}>
-          <Box
-            height={35}
-            mt="1px"
-            role="button"
-            aria-label="Previous day"
-            onClick={prevCallback}
-          >
+        <Grid item>
+          <IconButton aria-label="Previous day" onClick={prevCallback}>
             <ArrowBackIosNew
               fontSize="large"
-              sx={{ color: (theme) => theme.palette.primary.dark }}
+              sx={{ color: (theme) => theme.palette.common.white }}
             />
-          </Box>
+          </IconButton>
         </Grid>
         <Grid
           item
@@ -60,18 +54,13 @@ const DayNavigation = ({
             {title}
           </Typography>
         </Grid>
-        <Grid item padding={1}>
-          <Box
-            height={35}
-            role="button"
-            aria-label="Next day"
-            onClick={nextCallback}
-          >
+        <Grid item>
+          <IconButton aria-label="Next day" onClick={nextCallback}>
             <ArrowForwardIos
               fontSize="large"
-              sx={{ color: (theme) => theme.palette.primary.dark }}
+              sx={{ color: (theme) => theme.palette.common.white }}
             />
-          </Box>
+          </IconButton>
         </Grid>
       </Grid>
     </Paper>
