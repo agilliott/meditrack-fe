@@ -11,26 +11,26 @@ import { Box } from '@mui/system';
 interface TrackerData {
   icon_color: string;
   icon_key: string;
-  id: number;
+  id?: number;
   increments: [number];
   quantity: number;
   medicine_category_id: number;
   medicine_id: number;
   title: string;
+  updated?: string;
 }
 
 const transformTrackerData = (data: TrackerData): MedicationCardProps => {
-  // TODO: Use the increments when returns as an array and sort them
-  // Figure out the icon symantics. Icon name + icon color 'blue1' etc.
-  // Updated date
+  // TODO Figure out the icon symantics. Icon name + icon color 'blue1' etc.
   return {
     name: data.title,
     amount: data.quantity,
     id: data.id || undefined,
     incrementSettings: {
       selectValues: data.increments,
-      defaultSelectedValue: data.increments[0],
+      defaultSelectedValue: data.increments[0], // TODO
     },
+    updated: data.updated || undefined,
   };
 };
 
@@ -87,7 +87,7 @@ const Tracker = () => {
           nextCallback={nextDayClick}
         />
       </Grid>
-      {loading && (
+      {loading && !error && (
         <Grid item xs={12}>
           <Skeleton height={120} />
           <Skeleton height={120} />
@@ -104,7 +104,7 @@ const Tracker = () => {
           </Typography>
         </Grid>
       )}
-      {!medicationsForToday && !loading && (
+      {!medicationsForToday && !loading && !error && (
         <Grid item xs={12} textAlign="center" sx={{ marginTop: '30vh' }}>
           <Box>
             <Vaccines fontSize="large" />
@@ -115,6 +115,7 @@ const Tracker = () => {
         </Grid>
       )}
       {!loading &&
+        !error &&
         medicationsForToday &&
         medicationsForToday.map((item) => (
           <Grid

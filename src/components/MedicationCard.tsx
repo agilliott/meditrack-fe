@@ -18,8 +18,10 @@ import {
   CheckCircleOutline,
   ErrorOutline,
 } from '@mui/icons-material';
+import { format } from 'date-fns';
 
 import NumberIncrementer, { OperatorType } from './NumberIncrementer';
+import Timestamp from './Timestamp';
 
 interface Icon extends SvgIconProps {
   name: string;
@@ -34,6 +36,7 @@ export interface MedicationCardProps {
     selectValues: number[];
     defaultSelectedValue: number;
   };
+  updated?: string;
 }
 
 const iconMap: { [index: string]: (props: SvgIconProps) => JSX.Element } = {
@@ -52,12 +55,12 @@ const MedicationCard = ({
   icon = { name: 'MEDICATION', color: 'primary' },
   amount = 0,
   incrementSettings,
+  updated,
 }: MedicationCardProps) => {
   const [totalAmount, setTotalAmount] = useState<number>(amount);
   const [expanded, setExpanded] = useState<boolean>(false);
 
   // TODO: post on debounced change
-  // Fix icon alignment
 
   const error: boolean = false;
   const loading: boolean = false;
@@ -93,6 +96,7 @@ const MedicationCard = ({
           <Stack
             direction="row"
             spacing={2}
+            alignItems="center"
             sx={{ width: '70%', flexShrink: 0, margin: 'auto 0' }}
             onClick={handleExpand}
           >
@@ -139,6 +143,7 @@ const MedicationCard = ({
             increment={{ callback: handleAmountChange }}
             decrement={{ callback: handleAmountChange }}
           />
+          {updated && <Timestamp date={new Date(updated)} />}
         </AccordionDetails>
       </Accordion>
     </div>
