@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import apiClient from '../api/client';
+import { TrackerData } from '../pages/Tracker';
 
 interface BaseMedicationApiProps {
   date: string;
@@ -24,7 +25,7 @@ interface DayMedicineLog {
 
 interface DayMedicineResponse {
   [key: string]: {
-    [key: number]: any;
+    data: TrackerData;
   };
 }
 
@@ -53,11 +54,7 @@ export default function useUpdateMedication() {
     updateClient(updateUrl, payload, {
       signal: controllerRef.current?.signal,
     })
-      .then((response) =>
-        setResponse({
-          [payload.date]: { [payload.medicine_id]: response.data },
-        })
-      )
+      .then((response) => setResponse({ [payload.date]: response.data }))
       .catch((err) => {
         if (err.code !== 'ERR_CANCELED')
           setError({ [payload.date]: payload.medicine_id });

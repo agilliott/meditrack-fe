@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { useUpdateMedication } from '../hooks';
 import { API_DATE_FORMAT } from '../utils/formatting';
 
-interface TrackerData {
+export interface TrackerData {
   id?: number;
   medicine_id: number;
   medicine_category_id: number;
@@ -94,6 +94,7 @@ const Tracker = () => {
   const isDateToday = isToday(new Date(selectedDay));
   const lastWeek = sub(new Date(), { days: 7 });
   const is7DaysAgo = isSameDay(lastWeek, new Date(selectedDay));
+
   useEffect(() => {
     setIsNextLimit(isDateToday);
     setIsPrevLimit(is7DaysAgo);
@@ -104,6 +105,17 @@ const Tracker = () => {
       setMedicationsForToday(data[selectedDay]);
     }
   }, [data, selectedDay]);
+
+  useEffect(() => {
+    if (response?.[selectedDay] && medicationsForToday) {
+      const meds = [...medicationsForToday];
+      const indexOfMedicaiton = meds.findIndex(
+        (med) => med.medicine_id === response[selectedDay]?.data?.medicine_id
+      );
+      meds.splice(indexOfMedicaiton, 1, response[selectedDay]?.data);
+      setMedicationsForToday(meds);
+    }
+  }, [response, selectedDay, medicationsForToday]);
 
   return (
     <Grid container spacing={2} padding={2} mb={isDateToday ? '55px' : '120px'}>
@@ -146,44 +158,33 @@ const Tracker = () => {
       {!loading &&
         !error &&
         medicationsForToday &&
-        medicationsForToday.map((item) => {
-          console.log(response?.[selectedDay]?.[item.medicine_id]?.data);
-
-          return (
-            <Grid
-              item
-              xs={12}
-              key={item.id ? item.id : `${selectedDay}-${item.title}`}
-            >
-              <MedicationCard
-                name={item.title}
-                // icon={}
-                amount={item.quantity}
-                id={item.id}
-                medicineId={item.medicine_id}
-                incrementSettings={{
-                  selectValues: item.increments,
-                  defaultSelectedValue: item.increments[0],
-                }}
-                updated={
-                  response?.[selectedDay]?.[item.medicine_id]?.data?.meta
-                    ?.updated_at || item.meta?.updated_at
-                }
-                timeSinceUpdate={
-                  response?.[selectedDay]?.[item.medicine_id]?.data?.meta
-                    ?.time_since_last_update ||
-                  item.meta?.time_since_last_update
-                }
-                updateError={updateError?.[selectedDay] === item.medicine_id}
-                updateSubmitting={
-                  submitting?.[selectedDay] === item.medicine_id
-                }
-                updateSuccess={!!response?.[selectedDay]?.[item.medicine_id]}
-                handleUpdate={handleMedicationUpdate}
-              />
-            </Grid>
-          );
-        })}
+        medicationsForToday.map((item) => (
+          <Grid
+            item
+            xs={12}
+            key={item.id ? item.id : `${selectedDay}-${item.title}`}
+          >
+            <MedicationCard
+              name={item.title}
+              // icon={}
+              amount={item.quantity}
+              id={item.id}
+              medicineId={item.medicine_id}
+              incrementSettings={{
+                selectValues: item.increments,
+                defaultSelectedValue: item.increments[0],
+              }}
+              updated={item.meta?.updated_at}
+              timeSinceUpdate={item.meta?.time_since_last_update}
+              updateError={updateError?.[selectedDay] === item.medicine_id}
+              updateSubmitting={submitting?.[selectedDay] === item.medicine_id}
+              updateSuccess={
+                response?.[selectedDay]?.data?.medicine_id === item.medicine_id
+              }
+              handleUpdate={handleMedicationUpdate}
+            />
+          </Grid>
+        ))}
       {!isDateToday && (
         <Grid item xs={12}>
           <Fab

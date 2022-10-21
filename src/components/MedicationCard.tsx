@@ -53,6 +53,12 @@ export interface MedicationCardProps {
   }) => void;
 }
 
+interface ShowIcon {
+  success: boolean;
+  loading: boolean;
+  error: boolean;
+}
+
 const iconMap: { [index: string]: (props: SvgIconProps) => JSX.Element } = {
   MEDICATION: Medication,
   TEST_STRIP: MoreOutlined,
@@ -80,14 +86,39 @@ const MedicationCard = ({
 }: MedicationCardProps) => {
   const [totalAmount, setTotalAmount] = useState<number>(amount);
   const [expanded, setExpanded] = useState<boolean>(false);
+  const [showIcon, setShowIcon] = useState<ShowIcon>({
+    success: false,
+    loading: false,
+    error: false,
+  });
   const debouncedUpdate = useCallback(debounce(handleUpdate, 500), []);
 
-  // debounce
   useEffect(() => {
     if (totalAmount != amount) {
       debouncedUpdate({ quantity: totalAmount, medicineId, id });
     }
   }, [totalAmount]);
+
+  useEffect(() => {
+    if (updateError) {
+      setShowIcon({ success: false, loading: false, error: true });
+      setTimeout(() => {
+        setShowIcon({ success: false, loading: false, error: false });
+      }, 2000);
+    }
+    if (updateSubmitting) {
+      setShowIcon({ success: false, loading: true, error: false });
+      setTimeout(() => {
+        setShowIcon({ success: false, loading: false, error: false });
+      }, 2000);
+    }
+    if (updateSuccess) {
+      setShowIcon({ success: true, loading: false, error: false });
+      setTimeout(() => {
+        setShowIcon({ success: false, loading: false, error: false });
+      }, 2000);
+    }
+  }, [updateError, updateSubmitting, updateSuccess]);
 
   const handleFocus = (event: React.FocusEvent<HTMLInputElement>) =>
     event.target.select();
@@ -106,7 +137,7 @@ const MedicationCard = ({
   };
 
   return (
-    <div>
+    <>
       <Accordion expanded={expanded} elevation={3}>
         <AccordionSummary
           onClick={(e) => e.preventDefault}
@@ -132,13 +163,13 @@ const MedicationCard = ({
             justifyContent="flex-end"
             sx={{ width: '30%', flexShrink: 0, margin: 'auto 0' }}
           >
-            {updateSuccess && !updateSubmitting && !updateError && (
+            {showIcon.success && (
               <CheckCircleOutline color="success" sx={{ margin: 'auto' }} />
             )}
-            {updateError && !updateSubmitting && (
+            {showIcon.error && (
               <ErrorOutline color="error" sx={{ margin: 'auto' }} />
             )}
-            {updateSubmitting && (
+            {showIcon.loading && (
               <Box m="auto" pt="5px">
                 <CircularProgress color="inherit" size={20} />
               </Box>
@@ -174,7 +205,7 @@ const MedicationCard = ({
           )}
         </AccordionDetails>
       </Accordion>
-    </div>
+    </>
   );
 };
 
