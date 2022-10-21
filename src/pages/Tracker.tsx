@@ -115,7 +115,7 @@ const Tracker = () => {
       meds.splice(indexOfMedicaiton, 1, response[selectedDay]?.data);
       setMedicationsForToday(meds);
     }
-  }, [response, selectedDay, medicationsForToday]);
+  }, [response, selectedDay]);
 
   return (
     <Grid container spacing={2} padding={2} mb={isDateToday ? '55px' : '120px'}>

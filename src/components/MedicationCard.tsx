@@ -143,7 +143,7 @@ const MedicationCard = ({
 
   return (
     <>
-      <Accordion expanded={expanded} elevation={3}>
+      <Accordion expanded={expanded} elevation={1}>
         <AccordionSummary
           onClick={(e) => e.preventDefault}
           sx={{
