@@ -1,62 +1,94 @@
-import { Fab, Grid, Skeleton, Typography } from '@mui/material';
+import { Fab, Grid, Skeleton, Typography, Box } from '@mui/material';
 import { format, add, sub, isToday, isSameDay } from 'date-fns';
 import { Vaccines, LastPage, ErrorOutline } from '@mui/icons-material';
 
 import useFetchData from '../hooks/useFetchData';
 import { DayNavigation, MedicationCard } from '../components';
-import { MedicationCardProps } from '../components/MedicationCard';
 import { useEffect, useState } from 'react';
-import { Box } from '@mui/system';
+import { useUpdateMedication } from '../hooks';
+import { API_DATE_FORMAT } from '../utils/formatting';
 
 interface TrackerData {
+  id?: number;
+  medicine_id: number;
+  medicine_category_id: number;
+  user_id: number;
+  user_medicine_id: number;
   icon_color: string;
   icon_key: string;
-  id?: number;
   increments: [number];
   quantity: number;
-  medicine_category_id: number;
-  medicine_id: number;
   title: string;
-  updated?: string;
-}
-
-const transformTrackerData = (data: TrackerData): MedicationCardProps => {
-  // TODO Figure out the icon symantics. Icon name + icon color 'blue1' etc.
-  return {
-    name: data.title,
-    amount: data.quantity,
-    id: data.id || undefined,
-    incrementSettings: {
-      selectValues: data.increments,
-      defaultSelectedValue: data.increments[0], // TODO
-    },
-    updated: data.updated || undefined,
+  meta?: {
+    created_at?: string;
+    updated_at?: string;
+    time_since_last_update?: string;
   };
-};
+}
 
 const Tracker = () => {
   const [selectedDay, setSelectedDay] = useState<string>(
-    format(new Date(), 'yyyy-MM-dd')
+    format(new Date(), API_DATE_FORMAT)
   );
   const [isNextLimit, setIsNextLimit] = useState<boolean>(false);
   const [isPrevLimit, setIsPrevLimit] = useState<boolean>(false);
+  const [medicationsForToday, setMedicationsForToday] = useState<
+    TrackerData[] | null
+  >(null);
 
   const { data, loading, error } = useFetchData('/tracker');
-  const [medicationsForToday, setMedicationsForToday] = useState<
-    MedicationCardProps[] | null
-  >(null);
+  const {
+    updateMedication,
+    response,
+    submitting,
+    error: updateError,
+  } = useUpdateMedication();
+
+  const handleMedicationUpdate = ({
+    quantity,
+    medicineId,
+    id,
+  }: {
+    quantity: number;
+    medicineId: number;
+    id?: number;
+  }) => {
+    const updatedMedication = medicationsForToday?.find(
+      (med) => med.medicine_id === medicineId
+    );
+
+    // handle if no meds found or no id
+    if (updatedMedication) {
+      if (id) {
+        updateMedication({
+          id,
+          quantity: quantity || 0,
+          date: selectedDay,
+          medicine_id: updatedMedication.medicine_id,
+        });
+      } else {
+        updateMedication({
+          quantity: quantity || 0,
+          date: selectedDay,
+          user_id: updatedMedication.user_id,
+          medicine_id: updatedMedication.medicine_id,
+          user_medicine_id: updatedMedication.user_medicine_id,
+        });
+      }
+    }
+  };
 
   const prevDayClick = () => {
     const prevDay = sub(new Date(selectedDay), { days: 1 });
-    setSelectedDay(format(prevDay, 'yyyy-MM-dd'));
+    setSelectedDay(format(prevDay, API_DATE_FORMAT));
   };
   const nextDayClick = () => {
     const nextDay = add(new Date(selectedDay), { days: 1 });
-    setSelectedDay(format(nextDay, 'yyyy-MM-dd'));
+    setSelectedDay(format(nextDay, API_DATE_FORMAT));
   };
 
   const skipToTodayClick = () => {
-    setSelectedDay(format(new Date(), 'yyyy-MM-dd'));
+    setSelectedDay(format(new Date(), API_DATE_FORMAT));
   };
 
   const isDateToday = isToday(new Date(selectedDay));
@@ -69,10 +101,7 @@ const Tracker = () => {
 
   useEffect(() => {
     if (data?.[selectedDay]) {
-      const transformedData = data[selectedDay].map((medication: TrackerData) =>
-        transformTrackerData(medication)
-      );
-      setMedicationsForToday(transformedData);
+      setMedicationsForToday(data[selectedDay]);
     }
   }, [data, selectedDay]);
 
@@ -117,15 +146,44 @@ const Tracker = () => {
       {!loading &&
         !error &&
         medicationsForToday &&
-        medicationsForToday.map((item) => (
-          <Grid
-            item
-            xs={12}
-            key={item.id ? item.id : `${selectedDay}-${item.name}`}
-          >
-            <MedicationCard {...item} />
-          </Grid>
-        ))}
+        medicationsForToday.map((item) => {
+          console.log(response?.[selectedDay]?.[item.medicine_id]?.data);
+
+          return (
+            <Grid
+              item
+              xs={12}
+              key={item.id ? item.id : `${selectedDay}-${item.title}`}
+            >
+              <MedicationCard
+                name={item.title}
+                // icon={}
+                amount={item.quantity}
+                id={item.id}
+                medicineId={item.medicine_id}
+                incrementSettings={{
+                  selectValues: item.increments,
+                  defaultSelectedValue: item.increments[0],
+                }}
+                updated={
+                  response?.[selectedDay]?.[item.medicine_id]?.data?.meta
+                    ?.updated_at || item.meta?.updated_at
+                }
+                timeSinceUpdate={
+                  response?.[selectedDay]?.[item.medicine_id]?.data?.meta
+                    ?.time_since_last_update ||
+                  item.meta?.time_since_last_update
+                }
+                updateError={updateError?.[selectedDay] === item.medicine_id}
+                updateSubmitting={
+                  submitting?.[selectedDay] === item.medicine_id
+                }
+                updateSuccess={!!response?.[selectedDay]?.[item.medicine_id]}
+                handleUpdate={handleMedicationUpdate}
+              />
+            </Grid>
+          );
+        })}
       {!isDateToday && (
         <Grid item xs={12}>
           <Fab

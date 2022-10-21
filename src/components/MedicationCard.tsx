@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Stack,
   Accordion,
@@ -18,7 +18,7 @@ import {
   CheckCircleOutline,
   ErrorOutline,
 } from '@mui/icons-material';
-import { format } from 'date-fns';
+import debounce from 'lodash.debounce';
 
 import NumberIncrementer, { OperatorType } from './NumberIncrementer';
 import Timestamp from './Timestamp';
@@ -32,11 +32,25 @@ export interface MedicationCardProps {
   icon?: Icon;
   amount: number;
   id?: number;
+  medicineId: number;
   incrementSettings: {
     selectValues: number[];
     defaultSelectedValue: number;
   };
   updated?: string;
+  timeSinceUpdate?: string;
+  updateError: boolean;
+  updateSubmitting: boolean;
+  updateSuccess: boolean;
+  handleUpdate: ({
+    quantity,
+    medicineId,
+    id,
+  }: {
+    quantity: number;
+    medicineId: number;
+    id?: number;
+  }) => void;
 }
 
 const iconMap: { [index: string]: (props: SvgIconProps) => JSX.Element } = {
@@ -56,15 +70,24 @@ const MedicationCard = ({
   amount = 0,
   incrementSettings,
   updated,
+  id,
+  medicineId,
+  timeSinceUpdate,
+  updateError = false,
+  updateSubmitting = false,
+  updateSuccess = false,
+  handleUpdate,
 }: MedicationCardProps) => {
   const [totalAmount, setTotalAmount] = useState<number>(amount);
   const [expanded, setExpanded] = useState<boolean>(false);
+  const debouncedUpdate = useCallback(debounce(handleUpdate, 500), []);
 
-  // TODO: post on debounced change
-
-  const error: boolean = false;
-  const loading: boolean = false;
-  const success: boolean = false;
+  // debounce
+  useEffect(() => {
+    if (totalAmount != amount) {
+      debouncedUpdate({ quantity: totalAmount, medicineId, id });
+    }
+  }, [totalAmount]);
 
   const handleFocus = (event: React.FocusEvent<HTMLInputElement>) =>
     event.target.select();
@@ -109,15 +132,18 @@ const MedicationCard = ({
             justifyContent="flex-end"
             sx={{ width: '30%', flexShrink: 0, margin: 'auto 0' }}
           >
-            {success && (
+            {updateSuccess && !updateSubmitting && !updateError && (
               <CheckCircleOutline color="success" sx={{ margin: 'auto' }} />
             )}
-            {error && <ErrorOutline color="error" sx={{ margin: 'auto' }} />}
-            {loading && (
+            {updateError && !updateSubmitting && (
+              <ErrorOutline color="error" sx={{ margin: 'auto' }} />
+            )}
+            {updateSubmitting && (
               <Box m="auto" pt="5px">
                 <CircularProgress color="inherit" size={20} />
               </Box>
             )}
+
             <TextField
               variant="outlined"
               value={totalAmount}
@@ -143,7 +169,9 @@ const MedicationCard = ({
             increment={{ callback: handleAmountChange }}
             decrement={{ callback: handleAmountChange }}
           />
-          {updated && <Timestamp date={new Date(updated)} />}
+          {updated && timeSinceUpdate && (
+            <Timestamp date={new Date(updated)} timeLapsed={timeSinceUpdate} />
+          )}
         </AccordionDetails>
       </Accordion>
     </div>
