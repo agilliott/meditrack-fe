@@ -23,8 +23,9 @@ import debounce from 'lodash.debounce';
 import NumberIncrementer, { OperatorType } from './NumberIncrementer';
 import Timestamp from './Timestamp';
 
-interface Icon extends SvgIconProps {
+interface Icon {
   name: string;
+  color: string;
 }
 
 export interface MedicationCardProps {
@@ -60,19 +61,23 @@ interface ShowIcon {
 }
 
 const iconMap: { [index: string]: (props: SvgIconProps) => JSX.Element } = {
-  MEDICATION: Medication,
+  INSULIN: Medication,
   TEST_STRIP: MoreOutlined,
   NEEDLE: PushPinOutlined,
 };
 
 const getIcon = (icon: Icon) => {
-  const Component = iconMap[icon.name];
-  return <Component color={icon.color} />;
+  const Component = iconMap[icon.name] || Medication;
+  return (
+    <Component
+      sx={{ color: (theme: any) => theme.palette.colorOptions[icon.color] }}
+    />
+  );
 };
 
 const MedicationCard = ({
   name = 'Medication',
-  icon = { name: 'MEDICATION', color: 'primary' },
+  icon = { name: 'MEDICATION', color: 'blue1' },
   amount = 0,
   incrementSettings,
   updated,

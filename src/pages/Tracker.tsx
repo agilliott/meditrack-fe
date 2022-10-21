@@ -14,7 +14,7 @@ export interface TrackerData {
   medicine_category_id: number;
   user_id: number;
   user_medicine_id: number;
-  icon_color: string;
+  icon_colour: string; //CHANGE NAME BECAUSE WE DONT WANT INCONSISTENCIES THAT WASTE TIME
   icon_key: string;
   increments: [number];
   quantity: number;
@@ -166,7 +166,7 @@ const Tracker = () => {
           >
             <MedicationCard
               name={item.title}
-              // icon={}
+              icon={{ name: item.icon_key, color: item.icon_colour }}
               amount={item.quantity}
               id={item.id}
               medicineId={item.medicine_id}
