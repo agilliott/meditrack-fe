@@ -33,7 +33,7 @@ const Timestamp = ({
       textAlign="right"
       pt={2}
       onClick={handleClick}
-      sx={{ color: (theme) => theme.palette.text.secondary }}
+      sx={{ color: (theme) => theme.palette.text.secondary, cursor: 'pointer' }}
     >
       <Typography variant="subtitle2" color="inherit">
         Last updated {showTimer ? timeLapsed : dateFormatted}

@@ -52,6 +52,8 @@ export interface MedicationCardProps {
     medicineId: number;
     id?: number;
   }) => void;
+  expanded: boolean;
+  setExpanded: (medicineId: number, expandedStatus: boolean) => void;
 }
 
 interface ShowIcon {
@@ -87,10 +89,11 @@ const MedicationCard = ({
   updateError = false,
   updateSubmitting = false,
   updateSuccess = false,
+  expanded = false,
+  setExpanded,
   handleUpdate,
 }: MedicationCardProps) => {
   const [totalAmount, setTotalAmount] = useState<number>(amount);
-  const [expanded, setExpanded] = useState<boolean>(false);
   const [showIcon, setShowIcon] = useState<ShowIcon>({
     success: false,
     loading: false,
@@ -129,7 +132,7 @@ const MedicationCard = ({
     event.target.select();
 
   const handleExpand = () => {
-    setExpanded(!expanded);
+    setExpanded(medicineId, expanded);
   };
 
   const handleAmountChange = (value: number, operator: OperatorType) => {

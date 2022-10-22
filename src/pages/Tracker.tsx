@@ -26,10 +26,17 @@ export interface TrackerData {
   };
 }
 
+type ExpandedCard = {
+  [key: string]: {
+    [key: number]: boolean;
+  };
+};
+
 const Tracker = () => {
   const [selectedDay, setSelectedDay] = useState<string>(
     format(new Date(), API_DATE_FORMAT)
   );
+  const [expanded, setExpanded] = useState<ExpandedCard | null>(null);
   const [isNextLimit, setIsNextLimit] = useState<boolean>(false);
   const [isPrevLimit, setIsPrevLimit] = useState<boolean>(false);
   const [medicationsForToday, setMedicationsForToday] = useState<
@@ -91,6 +98,12 @@ const Tracker = () => {
     setSelectedDay(format(new Date(), API_DATE_FORMAT));
   };
 
+  const handleExpand = (medicineId: number, expandedStatus: boolean) => {
+    const updatedExpandedStatus = { ...expanded };
+    updatedExpandedStatus[selectedDay][medicineId] = !expandedStatus;
+    setExpanded(updatedExpandedStatus);
+  };
+
   const isDateToday = isToday(new Date(selectedDay));
   const lastWeek = sub(new Date(), { days: 7 });
   const is7DaysAgo = isSameDay(lastWeek, new Date(selectedDay));
@@ -103,6 +116,14 @@ const Tracker = () => {
   useEffect(() => {
     if (data?.[selectedDay]) {
       setMedicationsForToday(data[selectedDay]);
+
+      if (!expanded?.[selectedDay]) {
+        const expandedStatus: ExpandedCard = { [selectedDay]: {} };
+        data[selectedDay].forEach((med: TrackerData) => {
+          expandedStatus[selectedDay][med.medicine_id] = false;
+        });
+        setExpanded({ ...expanded, ...expandedStatus });
+      }
     }
   }, [data, selectedDay]);
 
@@ -174,6 +195,8 @@ const Tracker = () => {
                 selectValues: item.increments,
                 defaultSelectedValue: item.increments[0],
               }}
+              expanded={expanded?.[selectedDay]?.[item.medicine_id] || false}
+              setExpanded={handleExpand}
               updated={item.meta?.updated_at}
               timeSinceUpdate={item.meta?.time_since_last_update}
               updateError={updateError?.[selectedDay] === item.medicine_id}
