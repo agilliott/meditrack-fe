@@ -7,7 +7,6 @@ import { DayNavigation, MedicationCard } from '../components';
 import { useEffect, useState } from 'react';
 import { useUpdateMedication } from '../hooks';
 import { API_DATE_FORMAT } from '../utils/formatting';
-
 export interface TrackerData {
   id?: number;
   medicine_id: number;
@@ -26,6 +25,10 @@ export interface TrackerData {
   };
 }
 
+interface WeekData {
+  [key: string]: TrackerData[];
+}
+
 type ExpandedCard = {
   [key: string]: {
     [key: number]: boolean;
@@ -39,6 +42,8 @@ const Tracker = () => {
   const [expanded, setExpanded] = useState<ExpandedCard | null>(null);
   const [isNextLimit, setIsNextLimit] = useState<boolean>(false);
   const [isPrevLimit, setIsPrevLimit] = useState<boolean>(false);
+  const [medicationsForTheWeek, setMedicationsForTheWeek] =
+    useState<WeekData | null>(null);
   const [medicationsForToday, setMedicationsForToday] = useState<
     TrackerData[] | null
   >(null);
@@ -114,27 +119,35 @@ const Tracker = () => {
   }, [selectedDay]);
 
   useEffect(() => {
-    if (data?.[selectedDay]) {
-      setMedicationsForToday(data[selectedDay]);
+    if (data) {
+      setMedicationsForTheWeek(data);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (medicationsForTheWeek?.[selectedDay]) {
+      setMedicationsForToday(medicationsForTheWeek[selectedDay]);
 
       if (!expanded?.[selectedDay]) {
         const expandedStatus: ExpandedCard = { [selectedDay]: {} };
-        data[selectedDay].forEach((med: TrackerData) => {
+        medicationsForTheWeek[selectedDay].forEach((med: TrackerData) => {
           expandedStatus[selectedDay][med.medicine_id] = false;
         });
         setExpanded({ ...expanded, ...expandedStatus });
       }
     }
-  }, [data, selectedDay]);
+  }, [medicationsForTheWeek, selectedDay, medicationsForToday]);
 
   useEffect(() => {
     if (response?.[selectedDay] && medicationsForToday) {
-      const meds = [...medicationsForToday];
-      const indexOfMedicaiton = meds.findIndex(
+      const weeksMeds = { ...medicationsForTheWeek };
+      const todaysMeds = [...medicationsForToday];
+      const indexOfMedicaiton = todaysMeds.findIndex(
         (med) => med.medicine_id === response[selectedDay]?.data?.medicine_id
       );
-      meds.splice(indexOfMedicaiton, 1, response[selectedDay]?.data);
-      setMedicationsForToday(meds);
+      todaysMeds.splice(indexOfMedicaiton, 1, response[selectedDay]?.data);
+      weeksMeds[selectedDay] = todaysMeds;
+      setMedicationsForTheWeek(weeksMeds);
     }
   }, [response, selectedDay]);
 
