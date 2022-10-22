@@ -56,12 +56,6 @@ export interface MedicationCardProps {
   setExpanded: (medicineId: number, expandedStatus: boolean) => void;
 }
 
-interface ShowIcon {
-  success: boolean;
-  loading: boolean;
-  error: boolean;
-}
-
 const iconMap: { [index: string]: (props: SvgIconProps) => JSX.Element } = {
   INSULIN: Medication,
   TEST_STRIP: MoreOutlined,
@@ -94,11 +88,6 @@ const MedicationCard = ({
   handleUpdate,
 }: MedicationCardProps) => {
   const [totalAmount, setTotalAmount] = useState<number>(amount);
-  const [showIcon, setShowIcon] = useState<ShowIcon>({
-    success: false,
-    loading: false,
-    error: false,
-  });
   const debouncedUpdate = useCallback(debounce(handleUpdate, 500), []);
 
   useEffect(() => {
@@ -106,27 +95,6 @@ const MedicationCard = ({
       debouncedUpdate({ quantity: totalAmount, medicineId, id });
     }
   }, [totalAmount]);
-
-  useEffect(() => {
-    if (updateError) {
-      setShowIcon({ success: false, loading: false, error: true });
-      setTimeout(() => {
-        setShowIcon({ success: false, loading: false, error: false });
-      }, 2000);
-    }
-    if (updateSubmitting) {
-      setShowIcon({ success: false, loading: true, error: false });
-      setTimeout(() => {
-        setShowIcon({ success: false, loading: false, error: false });
-      }, 2000);
-    }
-    if (updateSuccess) {
-      setShowIcon({ success: true, loading: false, error: false });
-      setTimeout(() => {
-        setShowIcon({ success: false, loading: false, error: false });
-      }, 2000);
-    }
-  }, [updateError, updateSubmitting, updateSuccess]);
 
   const handleFocus = (event: React.FocusEvent<HTMLInputElement>) =>
     event.target.select();
@@ -171,16 +139,16 @@ const MedicationCard = ({
             justifyContent="flex-end"
             sx={{ width: '30%', flexShrink: 0, margin: 'auto 0' }}
           >
-            {showIcon.success && (
-              <CheckCircleOutline color="success" sx={{ margin: 'auto' }} />
-            )}
-            {showIcon.error && (
+            {updateError && (
               <ErrorOutline color="error" sx={{ margin: 'auto' }} />
             )}
-            {showIcon.loading && (
+            {updateSubmitting && !updateError && (
               <Box m="auto" pt="5px">
                 <CircularProgress color="inherit" size={20} />
               </Box>
+            )}
+            {updateSuccess && !updateError && !updateSubmitting && (
+              <CheckCircleOutline color="success" sx={{ margin: 'auto' }} />
             )}
 
             <TextField

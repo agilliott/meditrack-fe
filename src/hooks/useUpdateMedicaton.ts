@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import apiClient from '../api/client';
 import { TrackerData } from '../pages/Tracker';
 
@@ -60,10 +60,19 @@ export default function useUpdateMedication() {
           setError({ [payload.date]: payload.medicine_id });
       })
       .finally(() => {
-        setSubmitting(null);
         controllerRef.current = null;
+        setTimeout(() => setSubmitting(null), 1000);
       });
   };
+
+  useEffect(() => {
+    if (error) {
+      setTimeout(() => setError(null), 2000);
+    }
+    if (response && !submitting) {
+      setTimeout(() => setResponse(null), 2000);
+    }
+  }, [error, response, submitting]);
 
   return { updateMedication, response, error, submitting };
 }
