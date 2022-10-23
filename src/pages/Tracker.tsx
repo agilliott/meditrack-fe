@@ -9,7 +9,6 @@ import { useUpdateMedication } from '../hooks';
 import { API_DATE_FORMAT } from '../utils/formatting';
 export interface TrackerData {
   id?: number;
-  medicine_id: number;
   medicine_category_id: number;
   user_id: number;
   user_medicine_id: number;
@@ -66,7 +65,7 @@ const Tracker = () => {
     id?: number;
   }) => {
     const updatedMedication = medicationsForToday?.find(
-      (med) => med.medicine_id === medicineId
+      (med) => med.user_medicine_id === medicineId
     );
 
     // handle if no meds found or no id
@@ -76,14 +75,13 @@ const Tracker = () => {
           id,
           quantity: quantity || 0,
           date: selectedDay,
-          medicine_id: updatedMedication.medicine_id,
+          user_medicine_id: updatedMedication.user_medicine_id,
         });
       } else {
         updateMedication({
           quantity: quantity || 0,
           date: selectedDay,
           user_id: updatedMedication.user_id,
-          medicine_id: updatedMedication.medicine_id,
           user_medicine_id: updatedMedication.user_medicine_id,
         });
       }
@@ -131,7 +129,7 @@ const Tracker = () => {
       if (!expanded?.[selectedDay]) {
         const expandedStatus: ExpandedCard = { [selectedDay]: {} };
         medicationsForTheWeek[selectedDay].forEach((med: TrackerData) => {
-          expandedStatus[selectedDay][med.medicine_id] = false;
+          expandedStatus[selectedDay][med.user_medicine_id] = false;
         });
         setExpanded({ ...expanded, ...expandedStatus });
       }
@@ -143,7 +141,8 @@ const Tracker = () => {
       const weeksMeds = { ...medicationsForTheWeek };
       const todaysMeds = [...medicationsForToday];
       const indexOfMedicaiton = todaysMeds.findIndex(
-        (med) => med.medicine_id === response[selectedDay]?.data?.medicine_id
+        (med) =>
+          med.user_medicine_id === response[selectedDay]?.data?.user_medicine_id
       );
       todaysMeds.splice(indexOfMedicaiton, 1, response[selectedDay]?.data);
       weeksMeds[selectedDay] = todaysMeds;
@@ -203,19 +202,24 @@ const Tracker = () => {
               icon={{ name: item.icon_key, color: item.icon_colour }}
               amount={item.quantity}
               id={item.id}
-              medicineId={item.medicine_id}
+              medicineId={item.user_medicine_id}
               incrementSettings={{
                 selectValues: item.increments,
                 defaultSelectedValue: item.increments[0],
               }}
-              expanded={expanded?.[selectedDay]?.[item.medicine_id] || false}
+              expanded={
+                expanded?.[selectedDay]?.[item.user_medicine_id] || false
+              }
               setExpanded={handleExpand}
               updated={item.meta?.updated_at}
               timeSinceUpdate={item.meta?.time_since_last_update}
-              updateError={updateError?.[selectedDay] === item.medicine_id}
-              updateSubmitting={submitting?.[selectedDay] === item.medicine_id}
+              updateError={updateError?.[selectedDay] === item.user_medicine_id}
+              updateSubmitting={
+                submitting?.[selectedDay] === item.user_medicine_id
+              }
               updateSuccess={
-                response?.[selectedDay]?.data?.medicine_id === item.medicine_id
+                response?.[selectedDay]?.data?.user_medicine_id ===
+                item.user_medicine_id
               }
               handleUpdate={handleMedicationUpdate}
             />

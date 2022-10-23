@@ -4,7 +4,7 @@ import { TrackerData } from '../pages/Tracker';
 
 interface BaseMedicationApiProps {
   date: string;
-  medicine_id: number;
+  user_medicine_id: number;
 }
 
 export interface UpdateMedicationProps extends BaseMedicationApiProps {
@@ -16,7 +16,6 @@ export interface CreateMedicationProps extends BaseMedicationApiProps {
   quantity: number;
   date: string;
   user_id: number;
-  user_medicine_id: number;
 }
 
 interface DayMedicineLog {
@@ -38,7 +37,7 @@ export default function useUpdateMedication() {
   const updateMedication = (
     payload: CreateMedicationProps | UpdateMedicationProps
   ) => {
-    setSubmitting({ [payload.date]: payload.medicine_id });
+    setSubmitting({ [payload.date]: payload.user_medicine_id });
     setError(null);
 
     if (controllerRef.current) {
@@ -57,7 +56,7 @@ export default function useUpdateMedication() {
       .then((response) => setResponse({ [payload.date]: response.data }))
       .catch((err) => {
         if (err.code !== 'ERR_CANCELED')
-          setError({ [payload.date]: payload.medicine_id });
+          setError({ [payload.date]: payload.user_medicine_id });
       })
       .finally(() => {
         controllerRef.current = null;
