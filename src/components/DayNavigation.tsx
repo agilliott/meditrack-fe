@@ -36,13 +36,14 @@ const DayNavigation = ({
             aria-label="Previous day"
             onClick={prevCallback}
             disabled={hitPrevLimit}
+            sx={{ padding: '14px' }}
           >
-            <ArrowBackIosNew fontSize="large" />
+            <ArrowBackIosNew />
           </IconButton>
         </Grid>
         <Grid
           item
-          xs={8}
+          xs
           padding={1}
           sx={{
             lineHeight: 1,
@@ -65,8 +66,9 @@ const DayNavigation = ({
             aria-label="Next day"
             onClick={nextCallback}
             disabled={hitNextLimit}
+            sx={{ padding: '14px' }}
           >
-            <ArrowForwardIos fontSize="large" />
+            <ArrowForwardIos />
           </IconButton>
         </Grid>
       </Grid>
