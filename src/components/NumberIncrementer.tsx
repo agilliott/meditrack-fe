@@ -8,7 +8,7 @@ export type OperatorType = 'ADD' | 'SUBTRACT';
 
 interface NumberIncrementerProps {
   selectValues: number[];
-  defaultSelectedValue?: number;
+  defaultSelectedValue: number;
   increment: {
     callback: (value: number, operator: OperatorType) => void;
     enabled?: boolean;
@@ -26,7 +26,7 @@ const NumberIncrementer = ({
   decrement,
 }: NumberIncrementerProps) => {
   const [selected, setSelected] = useState(
-    defaultSelectedValue || selectValues[0]
+    selectValues[defaultSelectedValue] || selectValues[0]
   );
 
   function handleSubtract() {
@@ -42,7 +42,7 @@ const NumberIncrementer = ({
       <Grid item xs={2}>
         <IconButton
           color="primary"
-          aria-label={`Subtrack ${selected}`}
+          aria-label={`Subtract ${selected}`}
           onClick={handleSubtract}
         >
           <RemoveCircleOutline fontSize="large" />

@@ -116,7 +116,6 @@ const MedicationCard = ({
     <>
       <Accordion expanded={expanded} elevation={1}>
         <AccordionSummary
-          onClick={(e) => e.preventDefault}
           sx={{
             '&.Mui-focusVisible': {
               backgroundColor: 'transparent',
@@ -128,6 +127,7 @@ const MedicationCard = ({
             spacing={2}
             alignItems="center"
             sx={{ width: '70%', flexShrink: 0, margin: 'auto 0' }}
+            role="button"
             onClick={handleExpand}
           >
             {getIcon(icon)}
@@ -140,28 +140,40 @@ const MedicationCard = ({
             sx={{ width: '30%', flexShrink: 0, margin: 'auto 0' }}
           >
             {updateError && (
-              <ErrorOutline color="error" sx={{ margin: 'auto' }} />
+              <ErrorOutline
+                aria-label="An error has occurred"
+                color="error"
+                sx={{ margin: 'auto' }}
+              />
             )}
             {updateSubmitting && !updateError && (
-              <Box m="auto" pt="5px">
+              <Box m="auto" pt="5px" aria-label="Submitting">
                 <CircularProgress color="inherit" size={20} />
               </Box>
             )}
             {updateSuccess && !updateError && !updateSubmitting && (
-              <CheckCircleOutline color="success" sx={{ margin: 'auto' }} />
+              <CheckCircleOutline
+                aria-label="Successfully updated"
+                color="success"
+                sx={{ margin: 'auto' }}
+              />
             )}
 
             <TextField
-              variant="outlined"
+              variant="filled"
               value={totalAmount}
               onFocus={handleFocus}
+              aria-label="quantity"
               onChange={(e) => setTotalAmount(Number(e.target.value))}
               sx={{ width: 55 }}
+              InputProps={{
+                hiddenLabel: true,
+                disableUnderline: true,
+              }}
               inputProps={{
                 inputMode: 'numeric',
                 sx: {
                   textAlign: 'center',
-                  border: 'none',
                   backgroundColor: (theme: Theme) =>
                     theme.palette.background.default,
                 },
