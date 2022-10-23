@@ -26,7 +26,10 @@ export default function useFetchData(url: string) {
       .then((response) => response.data)
       .then(setData)
       .catch((err) => {
-        if (err.response.statusText === 'Unauthorized') {
+        if (
+          err.response.statusText === 'Unauthorized' ||
+          err.response.data.message === 'Unauthenticated.'
+        ) {
           onLogout();
         }
         if (err.code !== 'ERR_CANCELED') setError(err);

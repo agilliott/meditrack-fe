@@ -57,7 +57,10 @@ export default function useUpdateMedication() {
     })
       .then((response) => setResponse({ [payload.date]: response.data }))
       .catch((err) => {
-        if (err.response.statusText === 'Unauthorized') {
+        if (
+          err.response.statusText === 'Unauthorized' ||
+          err.response.data.message === 'Unauthenticated.'
+        ) {
           onLogout();
         }
         if (err.code !== 'ERR_CANCELED')
