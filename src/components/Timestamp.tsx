@@ -17,7 +17,7 @@ const Timestamp = ({
   timeLapsed,
 }: TimestampProps) => {
   const [showTimer, setShowTimer] = useState<boolean>(defaultToTimer);
-  const dateFormatted = format(date, 'Pp');
+  const dateFormatted = format(date, 'dd/MM/y HH:mm');
 
   const handleClick = () => {
     setShowTimer(!showTimer);

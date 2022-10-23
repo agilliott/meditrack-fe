@@ -8,7 +8,7 @@ const defaultProps = {
   timeLapsed: '2 seconds ago',
 };
 
-const dateFormatted = format(defaultProps.date, 'Pp');
+const dateFormatted = format(defaultProps.date, 'dd/MM/y HH:mm');
 
 describe('<Timestamp />', () => {
   it('renders with default config', () => {
