@@ -1,4 +1,4 @@
-import { render, screen, userEvent } from '../test/test-utils';
+import { render, screen } from '../test/test-utils';
 import DayNavigation from './DayNavigation';
 
 const defaultProps = {
@@ -10,6 +10,10 @@ const defaultProps = {
 };
 
 describe('<DayNavigation />', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('renders with default props', () => {
     render(<DayNavigation {...defaultProps} />);
     expect(screen.getByText(/October 22nd, 2022/i)).toBeInTheDocument();
@@ -27,21 +31,30 @@ describe('<DayNavigation />', () => {
     expect(screen.getByText(/today/i)).toBeInTheDocument();
   });
 
-  // it('executes callbacks when buttons are clicked', () => {
-  //   const mockNext = vi.fn();
-  //   const mockPrev = vi.fn();
-  //   render(
-  //     <DayNavigation
-  //       {...defaultProps}
-  //       prevCallback={mockPrev}
-  //       nextCallback={mockNext}
-  //     />
-  //   );
+  it('executes callbacks when buttons are clicked', async () => {
+    const mockNext = vi.fn();
+    const mockPrev = vi.fn();
+    const { user } = render(
+      <DayNavigation
+        {...defaultProps}
+        prevCallback={mockPrev}
+        nextCallback={mockNext}
+      />
+    );
 
-  //   userEvent.click(screen.getByRole('button', { name: /Previous day/i }));
-  //   expect(mockPrev).toHaveBeenCalledTimes(1);
+    await user.click(screen.getByRole('button', { name: /Previous day/i }));
+    expect(mockPrev).toHaveBeenCalledOnce();
 
-  //   userEvent.click(screen.getByRole('button', { name: /Next day/i }));
-  //   expect(mockNext).toHaveBeenCalledTimes(1);
-  // });
+    await user.click(screen.getByRole('button', { name: /Next day/i }));
+    expect(mockNext).toHaveBeenCalledOnce();
+  });
+
+  it('disables buttons when prev or next limit is TRUE', () => {
+    render(<DayNavigation {...defaultProps} hitNextLimit hitPrevLimit />);
+
+    expect(
+      screen.getByRole('button', { name: /Previous day/i })
+    ).toBeDisabled();
+    expect(screen.getByRole('button', { name: /Next day/i })).toBeDisabled();
+  });
 });

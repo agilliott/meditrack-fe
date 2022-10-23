@@ -1,19 +1,27 @@
-/* eslint-disable import/export */
-
 import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
-const customRender = (ui: React.ReactElement<any>, options = {}) =>
-  render(ui, {
-    // wrap provider(s) here if needed
+// const AllTheProviders = ({children}) => {
+//   return (
+//     <ThemeProvider theme="light">
+//       <TranslationProvider messages={defaultStrings}>
+//         {children}
+//       </TranslationProvider>
+//     </ThemeProvider>
+//   )
+// }
 
-    wrapper: ({ children }) => children,
-
-    ...options,
-  });
+const customRender = (ui: React.ReactElement<any>, options = {}) => {
+  return {
+    user: userEvent.setup(),
+    ...render(ui, {
+      wrapper: ({ children }) => children, // swap this fn with AllTheProviders when needed
+      ...options,
+    }),
+  };
+};
 
 export * from '@testing-library/react';
-
-export { default as userEvent } from '@testing-library/user-event';
 
 // override render export
 

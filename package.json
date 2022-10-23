@@ -41,6 +41,7 @@
     "@types/react-router": "^5.1.19",
     "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react": "^2.1.0",
+    "@vitest/coverage-c8": "^0.24.3",
     "dotenv": "^16.0.3",
     "husky": "^8.0.1",
     "jsdom": "^20.0.1",
