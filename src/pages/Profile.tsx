@@ -19,7 +19,13 @@ const Profile = () => {
   }, [logoutError, loading, loggedIn]);
 
   return (
-    <Grid container padding={2} spacing={2}>
+    <Grid
+      container
+      padding={2}
+      spacing={2}
+      alignContent="space-between"
+      sx={{ height: 'calc(100vh - 55px)' }}
+    >
       <Grid item xs={12}>
         <Typography variant="h1" gutterBottom>
           Profile
@@ -36,7 +42,7 @@ const Profile = () => {
             There was a problem logging out
           </Alert>
         )}
-        <Button variant="outlined" onClick={handleLogout}>
+        <Button fullWidth variant="outlined" onClick={handleLogout}>
           Log out
         </Button>
       </Grid>
