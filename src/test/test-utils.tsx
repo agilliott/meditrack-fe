@@ -1,12 +1,17 @@
-import { ThemeProvider } from '@mui/material/styles';
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
+import { ThemeProvider } from '@mui/material/styles';
 
 import { theme } from '../theme';
 
 const AllTheProviders = ({ children }: any) => {
-  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+  return (
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>{children}</BrowserRouter>
+    </ThemeProvider>
+  );
 };
 
 const customRender = (ui: React.ReactElement<any>, options = {}) => {

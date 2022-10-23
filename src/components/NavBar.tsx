@@ -1,11 +1,9 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { Paper, BottomNavigation, BottomNavigationAction } from '@mui/material';
-import {
-  CalendarMonth,
-  InsertChartOutlined,
-  MedicationOutlined,
-  Person2Outlined,
-} from '@mui/icons-material';
+import CalendarMonth from '@mui/icons-material/CalendarMonth';
+import InsertChartOutlined from '@mui/icons-material/InsertChartOutlined';
+import MedicationOutlined from '@mui/icons-material/MedicationOutlined';
+import Person2Outlined from '@mui/icons-material/Person2Outlined';
 
 import { routeKeyMap } from '../routing/routes';
 
