@@ -21,9 +21,7 @@ export type LoginInputs = {
 
 const Login = () => {
   const navigate = useNavigate();
-  const { onLogin, loggedIn, loading } = useAuth();
-  const [authError, setAuthError] = React.useState(false);
-  const [unknownError, setUnknownError] = React.useState(false);
+  const { onLogin, loggedIn, loading, authError, unknownError } = useAuth();
 
   const {
     register,
