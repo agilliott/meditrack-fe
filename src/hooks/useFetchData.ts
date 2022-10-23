@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { AxiosError } from 'axios';
 import apiClient from '../api/client';
+import useAuth from './useAuth';
 
 export default function useFetchData(url: string) {
   const [data, setData] = useState<any | null>(null);
   const [error, setError] = useState<AxiosError | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const controllerRef = useRef<AbortController | null>();
+  const { onLogout } = useAuth();
 
   useEffect(() => {
     setLoading(true);
@@ -24,6 +26,9 @@ export default function useFetchData(url: string) {
       .then((response) => response.data)
       .then(setData)
       .catch((err) => {
+        if (err.response.statusText === 'Unauthorized') {
+          onLogout();
+        }
         if (err.code !== 'ERR_CANCELED') setError(err);
       })
       .finally(() => {

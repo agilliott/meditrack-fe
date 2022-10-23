@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import apiClient from '../api/client';
 import { TrackerData } from '../pages/Tracker';
+import useAuth from './useAuth';
 
 interface BaseMedicationApiProps {
   date: string;
@@ -33,6 +34,7 @@ export default function useUpdateMedication() {
   const [error, setError] = useState<DayMedicineLog | null>(null);
   const [submitting, setSubmitting] = useState<DayMedicineLog | null>(null);
   const controllerRef = useRef<AbortController | null>();
+  const { onLogout } = useAuth();
 
   const updateMedication = (
     payload: CreateMedicationProps | UpdateMedicationProps
@@ -55,6 +57,9 @@ export default function useUpdateMedication() {
     })
       .then((response) => setResponse({ [payload.date]: response.data }))
       .catch((err) => {
+        if (err.response.statusText === 'Unauthorized') {
+          onLogout();
+        }
         if (err.code !== 'ERR_CANCELED')
           setError({ [payload.date]: payload.user_medicine_id });
       })
