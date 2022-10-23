@@ -1,4 +1,5 @@
-import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material';
+import ArrowBackIosNew from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIos from '@mui/icons-material/ArrowForwardIos';
 import { Grid, Paper, Typography, IconButton } from '@mui/material';
 import { format, isToday } from 'date-fns';
 
