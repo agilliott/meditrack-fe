@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Typography } from '@mui/material';
 import { format } from 'date-fns';
-import { TimerOutlined, CalendarMonthOutlined } from '@mui/icons-material';
+import TimerOutlined from '@mui/icons-material/TimerOutlined';
+import CalendarMonthOutlined from '@mui/icons-material/CalendarMonthOutlined';
 import { Stack } from '@mui/system';
 
 interface TimestampProps {
@@ -16,7 +17,7 @@ const Timestamp = ({
   timeLapsed,
 }: TimestampProps) => {
   const [showTimer, setShowTimer] = useState<boolean>(defaultToTimer);
-  const dateFormatted = format(date, 'PPPpp');
+  const dateFormatted = format(date, 'Pp');
 
   const handleClick = () => {
     setShowTimer(!showTimer);

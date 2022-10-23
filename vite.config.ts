@@ -12,7 +12,7 @@ export default defineConfig({
     restoreMocks: true,
     coverage: {
       reporter: ['text', 'html'],
-      exclude: ['src/test'],
+      exclude: ['src/test', 'src/theme'],
     },
   },
 });
