@@ -8,7 +8,7 @@ export default function useFetchData(url: string) {
   const [error, setError] = useState<AxiosError | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const controllerRef = useRef<AbortController | null>();
-  const { onLogout } = useAuth();
+  const { onLogout, handleSetAuthError } = useAuth();
 
   useEffect(() => {
     setLoading(true);
@@ -27,9 +27,10 @@ export default function useFetchData(url: string) {
       .then(setData)
       .catch((err) => {
         if (
-          err.response.statusText === 'Unauthorized' ||
-          err.response.data.message === 'Unauthenticated.'
+          err.response?.statusText === 'Unauthorized' ||
+          err.response?.data?.message === 'Unauthenticated.'
         ) {
+          handleSetAuthError(true);
           onLogout();
         }
         if (err.code !== 'ERR_CANCELED') setError(err);

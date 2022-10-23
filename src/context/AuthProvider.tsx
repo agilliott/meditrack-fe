@@ -14,6 +14,7 @@ interface AuthContextValue {
   logoutError: boolean;
   onLogin: (data: LoginInputs) => void;
   onLogout: () => void;
+  handleSetAuthError: (hasAuthError: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -77,6 +78,10 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     });
   };
 
+  const handleSetAuthError = (hasAuthError: boolean) => {
+    setAuthError(hasAuthError);
+  };
+
   const value = {
     loggedIn,
     loading,
@@ -85,6 +90,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     logoutError,
     onLogin: handleLogin,
     onLogout: handleLogout,
+    handleSetAuthError,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

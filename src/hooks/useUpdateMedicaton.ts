@@ -34,7 +34,7 @@ export default function useUpdateMedication() {
   const [error, setError] = useState<DayMedicineLog | null>(null);
   const [submitting, setSubmitting] = useState<DayMedicineLog | null>(null);
   const controllerRef = useRef<AbortController | null>();
-  const { onLogout } = useAuth();
+  const { onLogout, handleSetAuthError } = useAuth();
 
   const updateMedication = (
     payload: CreateMedicationProps | UpdateMedicationProps
@@ -58,9 +58,10 @@ export default function useUpdateMedication() {
       .then((response) => setResponse({ [payload.date]: response.data }))
       .catch((err) => {
         if (
-          err.response.statusText === 'Unauthorized' ||
-          err.response.data.message === 'Unauthenticated.'
+          err.response?.statusText === 'Unauthorized' ||
+          err.response?.data?.message === 'Unauthenticated.'
         ) {
+          handleSetAuthError(true);
           onLogout();
         }
         if (err.code !== 'ERR_CANCELED')
