@@ -10,10 +10,6 @@ const defaultProps = {
 };
 
 describe('<DayNavigation />', () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   it('renders with default props', () => {
     render(<DayNavigation {...defaultProps} />);
     expect(screen.getByText(/October 22nd, 2022/i)).toBeInTheDocument();

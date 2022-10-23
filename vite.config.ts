@@ -9,9 +9,10 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/test/setupTests.ts',
+    restoreMocks: true,
     coverage: {
       reporter: ['text', 'html'],
-      exclude: ['node_modules/', 'src/test'],
+      exclude: ['src/test'],
     },
   },
 });
