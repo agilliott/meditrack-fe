@@ -25,16 +25,18 @@ const NumberIncrementer = ({
   increment,
   decrement,
 }: NumberIncrementerProps) => {
+  const { callback: dCallback, enabled: dEnabled = true } = decrement;
+  const { callback: iCallback, enabled: iEnabled = true } = increment;
   const [selected, setSelected] = useState(
     selectValues[defaultSelectedValue] || selectValues[0]
   );
 
   function handleSubtract() {
-    decrement.callback(selected, 'SUBTRACT');
+    dCallback(selected, 'SUBTRACT');
   }
 
   function handleAdd() {
-    increment.callback(selected, 'ADD');
+    iCallback(selected, 'ADD');
   }
 
   return (
@@ -44,6 +46,7 @@ const NumberIncrementer = ({
           color="primary"
           aria-label={`Subtract ${selected}`}
           onClick={handleSubtract}
+          disabled={!dEnabled}
         >
           <RemoveCircleOutline fontSize="large" />
         </IconButton>
@@ -66,6 +69,7 @@ const NumberIncrementer = ({
           color="primary"
           aria-label={`Add ${selected}`}
           onClick={handleAdd}
+          disabled={!iEnabled}
         >
           <AddCircleOutline fontSize="large" />
         </IconButton>
