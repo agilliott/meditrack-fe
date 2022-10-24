@@ -115,6 +115,7 @@ const MedicationCard = ({
 
   const handleKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && textInput.current) {
+      e.preventDefault();
       textInput.current.blur();
     }
   };
