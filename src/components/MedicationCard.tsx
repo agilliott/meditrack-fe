@@ -173,7 +173,11 @@ const MedicationCard = ({
               value={totalAmount}
               onFocus={handleFocus}
               aria-label="quantity"
-              onChange={(e) => setTotalAmount(Number(e.target.value))}
+              onChange={(e) => {
+                if (!isNaN(Number(e.target.value))) {
+                  setTotalAmount(Number(e.target.value));
+                }
+              }}
               onKeyDown={handleKeydown}
               sx={{ width: 55 }}
               InputProps={{
