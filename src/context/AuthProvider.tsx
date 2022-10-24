@@ -9,12 +9,17 @@ interface AuthProviderProps {
 interface AuthContextValue {
   loggedIn: boolean;
   loading: boolean;
-  authError: boolean;
+  authError: AuthError;
   unknownError: boolean;
   logoutError: boolean;
   onLogin: (data: LoginInputs) => void;
   onLogout: () => void;
-  handleSetAuthError: (hasAuthError: boolean) => void;
+  handleSetAuthError: (authErrors: AuthError) => void;
+}
+
+interface AuthError {
+  expired: boolean;
+  unauthorised: boolean;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -24,12 +29,18 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     sessionStorage.getItem('loggedIn') === 'true' || false
   );
   const [loading, setLoading] = useState<boolean>(false);
-  const [authError, setAuthError] = useState<boolean>(false);
+  const [authError, setAuthError] = useState<AuthError>({
+    expired: false,
+    unauthorised: false,
+  });
   const [unknownError, setUnknownError] = useState<boolean>(false);
   const [logoutError, setLogoutError] = useState<boolean>(false);
 
   const handleLogin = (data: LoginInputs) => {
-    setAuthError(false);
+    setAuthError({
+      expired: false,
+      unauthorised: false,
+    });
     setUnknownError(false);
     setLoading(true);
 
@@ -47,7 +58,10 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         })
         .catch((error) => {
           if (error.response && error.response.status === 422) {
-            setAuthError(true);
+            setAuthError({
+              expired: false,
+              unauthorised: true,
+            });
           } else {
             setUnknownError(true);
           }
@@ -78,8 +92,8 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     });
   };
 
-  const handleSetAuthError = (hasAuthError: boolean) => {
-    setAuthError(hasAuthError);
+  const handleSetAuthError = (authErrors: AuthError) => {
+    setAuthError(authErrors);
   };
 
   const value = {
