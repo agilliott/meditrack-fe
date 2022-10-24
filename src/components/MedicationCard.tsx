@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Stack,
   Accordion,
@@ -89,6 +89,7 @@ const MedicationCard = ({
 }: MedicationCardProps) => {
   const [totalAmount, setTotalAmount] = useState<number>(amount);
   const debouncedUpdate = useCallback(debounce(handleUpdate, 500), []);
+  const textInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (totalAmount != amount) {
@@ -109,6 +110,12 @@ const MedicationCard = ({
     } else {
       const subtractedAmount = totalAmount - value;
       setTotalAmount(subtractedAmount < 0 ? 0 : subtractedAmount);
+    }
+  };
+
+  const handleKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && textInput.current) {
+      textInput.current.blur();
     }
   };
 
@@ -161,10 +168,12 @@ const MedicationCard = ({
 
             <TextField
               variant="filled"
+              inputRef={textInput}
               value={totalAmount}
               onFocus={handleFocus}
               aria-label="quantity"
               onChange={(e) => setTotalAmount(Number(e.target.value))}
+              onKeyDown={handleKeydown}
               sx={{ width: 55 }}
               InputProps={{
                 hiddenLabel: true,

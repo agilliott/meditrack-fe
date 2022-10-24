@@ -177,4 +177,17 @@ describe('<MedicationCard />', () => {
       defaultProps.amount.toString()
     );
   });
+
+  it('Blurs input on enter key press', async () => {
+    const { user } = render(<MedicationCard {...defaultProps} />);
+    const input = screen.getByRole('textbox');
+
+    await user.click(input);
+
+    expect(input).toHaveFocus();
+
+    await user.keyboard('{enter}');
+
+    expect(input).not.toHaveFocus();
+  });
 });
