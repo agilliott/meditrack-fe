@@ -61,7 +61,7 @@ export default function useUpdateMedication() {
           err.response?.statusText === 'Unauthorized' ||
           err.response?.data?.message === 'Unauthenticated.'
         ) {
-          handleSetAuthError(true);
+          handleSetAuthError({ expired: true, unauthorised: false });
           onLogout();
         }
         if (err.code !== 'ERR_CANCELED')

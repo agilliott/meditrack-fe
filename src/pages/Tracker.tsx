@@ -47,7 +47,7 @@ const Tracker = () => {
     TrackerData[] | null
   >(null);
 
-  const { data, loading, error } = useFetchData('/tracker');
+  const { data, loading, error } = useFetchData(`/tracker?date=${selectedDay}`);
   const {
     updateMedication,
     response,
