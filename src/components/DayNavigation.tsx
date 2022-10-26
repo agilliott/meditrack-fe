@@ -31,7 +31,7 @@ const DayNavigation = ({
       }}
     >
       <Grid container justifyContent="space-between">
-        <Grid item>
+        <Grid item flexBasis="auto">
           <IconButton
             aria-label="Previous day"
             onClick={prevCallback}
@@ -48,6 +48,7 @@ const DayNavigation = ({
           sx={{
             lineHeight: 1,
             backgroundColor: (theme) => theme.palette.primary.dark,
+            textAlign: 'center',
           }}
         >
           <Typography
@@ -61,7 +62,7 @@ const DayNavigation = ({
             {title}
           </Typography>
         </Grid>
-        <Grid item>
+        <Grid item flexBasis="auto" textAlign="right">
           <IconButton
             aria-label="Next day"
             onClick={nextCallback}
