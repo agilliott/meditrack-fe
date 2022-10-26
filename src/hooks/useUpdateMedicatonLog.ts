@@ -2,17 +2,17 @@ import { useEffect, useRef, useState } from 'react';
 import apiClient from '../api/client';
 import useAuth from './useAuth';
 
-interface BaseMedicationApiProps {
+interface BaseMedicationLogApiProps {
   date: string;
   user_medicine_id: number;
 }
 
-export interface UpdateMedicationProps extends BaseMedicationApiProps {
+export interface UpdateMedicationLogProps extends BaseMedicationLogApiProps {
   id: number;
   quantity: number;
 }
 
-export interface CreateMedicationProps extends BaseMedicationApiProps {
+export interface CreateMedicationLogProps extends BaseMedicationLogApiProps {
   quantity: number;
   date: string;
   user_id: number;
@@ -36,25 +36,27 @@ export interface MedicationLog {
   };
 }
 
-interface DayMedicineLog {
+interface DayMedicationLog {
   [key: string]: number;
 }
 
-interface DayMedicineResponse {
+interface DayMedicationLogResponse {
   [key: string]: {
     data: MedicationLog;
   };
 }
 
 export default function useUpdateMedicationLog() {
-  const [response, setResponse] = useState<DayMedicineResponse | null>(null);
-  const [error, setError] = useState<DayMedicineLog | null>(null);
-  const [submitting, setSubmitting] = useState<DayMedicineLog | null>(null);
+  const [response, setResponse] = useState<DayMedicationLogResponse | null>(
+    null
+  );
+  const [error, setError] = useState<DayMedicationLog | null>(null);
+  const [submitting, setSubmitting] = useState<DayMedicationLog | null>(null);
   const controllerRef = useRef<AbortController | null>();
   const { onLogout, handleSetAuthError } = useAuth();
 
   const updateMedicationLog = (
-    payload: CreateMedicationProps | UpdateMedicationProps
+    payload: CreateMedicationLogProps | UpdateMedicationLogProps
   ) => {
     setSubmitting({ [payload.date]: payload.user_medicine_id });
     setError(null);

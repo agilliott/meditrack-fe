@@ -1,5 +1,5 @@
 import { render, screen } from '../test/test-utils';
-import MedicationCard from './MedicationCard';
+import MedicationCard from './MedicationLogCard';
 
 const defaultProps = {
   name: 'My meds',

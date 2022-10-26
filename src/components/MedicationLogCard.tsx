@@ -20,7 +20,7 @@ import {
 } from '@mui/icons-material';
 import debounce from 'lodash.debounce';
 
-import { useUpdateMedicine } from '../hooks';
+import { useUpdateMedication } from '../hooks';
 import NumberIncrementer, { OperatorType } from './NumberIncrementer';
 import Timestamp from './Timestamp';
 
@@ -91,7 +91,7 @@ const MedicationCard = ({
   const [totalAmount, setTotalAmount] = useState<number>(amount);
   const debouncedUpdate = useCallback(debounce(handleUpdate, 1000), []);
   const textInput = useRef<HTMLInputElement>(null);
-  const { updateMedicine } = useUpdateMedicine();
+  const { updateMedication } = useUpdateMedication();
 
   useEffect(() => {
     if (totalAmount != amount) {
@@ -116,7 +116,7 @@ const MedicationCard = ({
   };
 
   const updateSelectDefault = (index: number) => {
-    updateMedicine({
+    updateMedication({
       user_medicine_id: medicineId,
       default_increment_index: index,
     });

@@ -4,7 +4,7 @@ import { format, add, sub, isToday, isSameDay } from 'date-fns';
 import { Vaccines, LastPage, ErrorOutline } from '@mui/icons-material';
 
 import { useUpdateMedicatonLog, useFetchData, MedicationLog } from '../hooks';
-import { DayNavigation, MedicationCard } from '../components';
+import { DayNavigation, MedicationLogCard } from '../components';
 import { API_DATE_FORMAT } from '../utils/formatting';
 
 interface WeekData {
@@ -180,7 +180,7 @@ const Tracker = () => {
             xs={12}
             key={item.id ? item.id : `${selectedDay}-${item.title}`}
           >
-            <MedicationCard
+            <MedicationLogCard
               name={item.title}
               icon={{ name: item.icon_key, color: item.icon_colour }}
               amount={item.quantity}

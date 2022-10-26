@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import apiClient from '../api/client';
 import useAuth from './useAuth';
 
-export interface UpdateMedicineProps {
+export interface UpdateMedicationProps {
   user_medicine_id: number;
   medicine_category_id?: number;
   title?: string;
@@ -13,7 +13,7 @@ export interface UpdateMedicineProps {
   searchable?: boolean;
 }
 
-export interface CreateMedicineProps {
+export interface CreateMedicationProps {
   medicine_category_id: number;
   title: string;
   icon_key: string;
@@ -44,15 +44,15 @@ interface MedicineLog {
   [key: number]: boolean;
 }
 
-export default function useUpdateMedicine() {
+export default function useUpdateMedication() {
   const [response, setResponse] = useState<Medicine | null>(null);
   const [error, setError] = useState<MedicineLog | null>(null);
   const [submitting, setSubmitting] = useState<MedicineLog | null>(null);
   const controllerRef = useRef<AbortController | null>();
   const { onLogout, handleSetAuthError } = useAuth();
 
-  const updateMedicine = (
-    payload: CreateMedicineProps | UpdateMedicineProps
+  const updateMedication = (
+    payload: CreateMedicationProps | UpdateMedicationProps
   ) => {
     const key =
       'user_medicine_id' in payload ? payload?.user_medicine_id : 'new';
@@ -93,5 +93,5 @@ export default function useUpdateMedicine() {
       });
   };
 
-  return { updateMedicine, response, error, submitting };
+  return { updateMedication, response, error, submitting };
 }
