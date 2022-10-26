@@ -1,31 +1,14 @@
+import { useEffect, useState } from 'react';
 import { Fab, Grid, Skeleton, Typography, Box } from '@mui/material';
 import { format, add, sub, isToday, isSameDay } from 'date-fns';
 import { Vaccines, LastPage, ErrorOutline } from '@mui/icons-material';
 
-import useFetchData from '../hooks/useFetchData';
+import { useUpdateMedicatonLog, useFetchData, MedicationLog } from '../hooks';
 import { DayNavigation, MedicationCard } from '../components';
-import { useEffect, useState } from 'react';
-import { useUpdateMedication } from '../hooks';
 import { API_DATE_FORMAT } from '../utils/formatting';
-export interface TrackerData {
-  id?: number;
-  medicine_category_id: number;
-  user_id: number;
-  user_medicine_id: number;
-  icon_colour: string; //CHANGE NAME BECAUSE WE DONT WANT INCONSISTENCIES THAT WASTE TIME
-  icon_key: string;
-  increments: [number];
-  quantity: number;
-  title: string;
-  meta?: {
-    created_at?: string;
-    updated_at?: string;
-    time_since_last_update?: string;
-  };
-}
 
 interface WeekData {
-  [key: string]: TrackerData[];
+  [key: string]: MedicationLog[];
 }
 
 type ExpandedCard = {
@@ -44,16 +27,16 @@ const Tracker = () => {
   const [medicationsForTheWeek, setMedicationsForTheWeek] =
     useState<WeekData | null>(null);
   const [medicationsForToday, setMedicationsForToday] = useState<
-    TrackerData[] | null
+    MedicationLog[] | null
   >(null);
 
   const { data, loading, error } = useFetchData(`/tracker?date=${selectedDay}`);
   const {
-    updateMedication,
+    updateMedicationLog,
     response,
     submitting,
     error: updateError,
-  } = useUpdateMedication();
+  } = useUpdateMedicatonLog();
 
   const handleMedicationUpdate = ({
     quantity,
@@ -71,14 +54,14 @@ const Tracker = () => {
     // handle if no meds found or no id
     if (updatedMedication) {
       if (id) {
-        updateMedication({
+        updateMedicationLog({
           id,
           quantity: quantity || 0,
           date: selectedDay,
           user_medicine_id: updatedMedication.user_medicine_id,
         });
       } else {
-        updateMedication({
+        updateMedicationLog({
           quantity: quantity || 0,
           date: selectedDay,
           user_id: updatedMedication.user_id,
@@ -128,7 +111,7 @@ const Tracker = () => {
 
       if (!expanded?.[selectedDay]) {
         const expandedStatus: ExpandedCard = { [selectedDay]: {} };
-        medicationsForTheWeek[selectedDay].forEach((med: TrackerData) => {
+        medicationsForTheWeek[selectedDay].forEach((med: MedicationLog) => {
           expandedStatus[selectedDay][med.user_medicine_id] = false;
         });
         setExpanded({ ...expanded, ...expandedStatus });
@@ -205,7 +188,7 @@ const Tracker = () => {
               medicineId={item.user_medicine_id}
               incrementSettings={{
                 selectValues: item.increments,
-                defaultSelectedValue: item.increments[0],
+                defaultSelectedValueIndex: item.default_increment_index || 0,
               }}
               expanded={
                 expanded?.[selectedDay]?.[item.user_medicine_id] || false

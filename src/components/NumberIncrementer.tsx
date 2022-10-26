@@ -17,6 +17,7 @@ interface NumberIncrementerProps {
     callback: (value: number, operator: OperatorType) => void;
     enabled?: boolean;
   };
+  onSelectChange: (value: number) => void;
 }
 
 const NumberIncrementer = ({
@@ -24,6 +25,7 @@ const NumberIncrementer = ({
   defaultSelectedValue,
   increment,
   decrement,
+  onSelectChange,
 }: NumberIncrementerProps) => {
   const { callback: dCallback, enabled: dEnabled = true } = decrement;
   const { callback: iCallback, enabled: iEnabled = true } = increment;
@@ -37,6 +39,11 @@ const NumberIncrementer = ({
 
   function handleAdd() {
     iCallback(selected, 'ADD');
+  }
+
+  function handleChange(value: number, index: number) {
+    setSelected(value);
+    onSelectChange(index);
   }
 
   return (
@@ -53,12 +60,13 @@ const NumberIncrementer = ({
       </Grid>
       <Grid item xs={8} m="auto">
         <Grid container>
-          {selectValues.map((value) => (
+          {selectValues.map((value, index) => (
             <Grid item xs key={value} textAlign="center">
               <NumberSelect
                 value={value}
                 selected={selected === value}
-                callback={setSelected}
+                callback={handleChange}
+                index={index}
               />
             </Grid>
           ))}

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import apiClient from '../api/client';
-import { TrackerData } from '../pages/Tracker';
 import useAuth from './useAuth';
 
 interface BaseMedicationApiProps {
@@ -19,24 +18,42 @@ export interface CreateMedicationProps extends BaseMedicationApiProps {
   user_id: number;
 }
 
+export interface MedicationLog {
+  id?: number;
+  medicine_category_id: number;
+  user_id: number;
+  user_medicine_id: number;
+  icon_colour: string;
+  icon_key: string;
+  increments: [number];
+  default_increment_index: number;
+  quantity: number;
+  title: string;
+  meta?: {
+    created_at?: string;
+    updated_at?: string;
+    time_since_last_update?: string;
+  };
+}
+
 interface DayMedicineLog {
   [key: string]: number;
 }
 
 interface DayMedicineResponse {
   [key: string]: {
-    data: TrackerData;
+    data: MedicationLog;
   };
 }
 
-export default function useUpdateMedication() {
+export default function useUpdateMedicationLog() {
   const [response, setResponse] = useState<DayMedicineResponse | null>(null);
   const [error, setError] = useState<DayMedicineLog | null>(null);
   const [submitting, setSubmitting] = useState<DayMedicineLog | null>(null);
   const controllerRef = useRef<AbortController | null>();
   const { onLogout, handleSetAuthError } = useAuth();
 
-  const updateMedication = (
+  const updateMedicationLog = (
     payload: CreateMedicationProps | UpdateMedicationProps
   ) => {
     setSubmitting({ [payload.date]: payload.user_medicine_id });
@@ -82,5 +99,5 @@ export default function useUpdateMedication() {
     }
   }, [error, response, submitting]);
 
-  return { updateMedication, response, error, submitting };
+  return { updateMedicationLog, response, error, submitting };
 }

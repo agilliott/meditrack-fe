@@ -9,7 +9,7 @@ const defaultProps = {
   medicineId: 2,
   incrementSettings: {
     selectValues: [2, 3, 5],
-    defaultSelectedValue: 1,
+    defaultSelectedValueIndex: 1,
   },
   updated: '2022-10-23',
   timeSinceUpdate: '50 minutes ago',
@@ -64,7 +64,7 @@ describe('<MedicationCard />', () => {
   it('sets the increment options correctly', () => {
     const mockincrementSettings = {
       selectValues: [2, 6, 8],
-      defaultSelectedValue: 2,
+      defaultSelectedValueIndex: 2,
     };
     render(
       <MedicationCard
@@ -135,7 +135,7 @@ describe('<MedicationCard />', () => {
     const newAmount =
       defaultProps.amount +
       defaultProps.incrementSettings.selectValues[
-        defaultProps.incrementSettings.defaultSelectedValue
+        defaultProps.incrementSettings.defaultSelectedValueIndex
       ];
 
     expect(screen.getByRole('textbox')).toHaveValue(newAmount.toString());
@@ -190,4 +190,6 @@ describe('<MedicationCard />', () => {
 
     expect(input).not.toHaveFocus();
   });
+
+  // Test: It calls hook on change
 });

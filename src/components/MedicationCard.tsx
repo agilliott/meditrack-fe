@@ -20,6 +20,7 @@ import {
 } from '@mui/icons-material';
 import debounce from 'lodash.debounce';
 
+import { useUpdateMedicine } from '../hooks';
 import NumberIncrementer, { OperatorType } from './NumberIncrementer';
 import Timestamp from './Timestamp';
 
@@ -36,7 +37,7 @@ export interface MedicationCardProps {
   medicineId: number;
   incrementSettings: {
     selectValues: number[];
-    defaultSelectedValue: number;
+    defaultSelectedValueIndex: number;
   };
   updated?: string;
   timeSinceUpdate?: string;
@@ -90,6 +91,7 @@ const MedicationCard = ({
   const [totalAmount, setTotalAmount] = useState<number>(amount);
   const debouncedUpdate = useCallback(debounce(handleUpdate, 1000), []);
   const textInput = useRef<HTMLInputElement>(null);
+  const { updateMedicine } = useUpdateMedicine();
 
   useEffect(() => {
     if (totalAmount != amount) {
@@ -113,6 +115,13 @@ const MedicationCard = ({
     }
   };
 
+  const updateSelectDefault = (index: number) => {
+    updateMedicine({
+      user_medicine_id: medicineId,
+      default_increment_index: index,
+    });
+  };
+
   const handleKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && textInput.current) {
       e.preventDefault();
@@ -121,93 +130,92 @@ const MedicationCard = ({
   };
 
   return (
-    <>
-      <Accordion expanded={expanded} elevation={1}>
-        <AccordionSummary
-          sx={{
-            '&.Mui-focusVisible': {
-              backgroundColor: 'transparent',
-            },
-          }}
+    <Accordion expanded={expanded} elevation={1}>
+      <AccordionSummary
+        sx={{
+          '&.Mui-focusVisible': {
+            backgroundColor: 'transparent',
+          },
+        }}
+      >
+        <Stack
+          direction="row"
+          spacing={2}
+          alignItems="center"
+          sx={{ width: '70%', flexShrink: 0, margin: 'auto 0' }}
+          role="button"
+          onClick={handleExpand}
         >
-          <Stack
-            direction="row"
-            spacing={2}
-            alignItems="center"
-            sx={{ width: '70%', flexShrink: 0, margin: 'auto 0' }}
-            role="button"
-            onClick={handleExpand}
-          >
-            {getIcon(icon)}
-            <Typography>{name}</Typography>
-          </Stack>
-          <Stack
-            direction="row"
-            spacing={1}
-            justifyContent="flex-end"
-            sx={{ width: '30%', flexShrink: 0, margin: 'auto 0' }}
-          >
-            {updateError && (
-              <ErrorOutline
-                aria-label="An error has occurred"
-                color="error"
-                sx={{ margin: 'auto' }}
-              />
-            )}
-            {updateSubmitting && !updateError && (
-              <Box m="auto" pt="5px" aria-label="Submitting">
-                <CircularProgress color="inherit" size={20} />
-              </Box>
-            )}
-            {updateSuccess && !updateError && !updateSubmitting && (
-              <CheckCircleOutline
-                aria-label="Successfully updated"
-                color="success"
-                sx={{ margin: 'auto' }}
-              />
-            )}
-
-            <TextField
-              variant="filled"
-              inputRef={textInput}
-              value={totalAmount}
-              onFocus={handleFocus}
-              aria-label="quantity"
-              onChange={(e) => {
-                if (!isNaN(Number(e.target.value))) {
-                  setTotalAmount(Number(e.target.value));
-                }
-              }}
-              onKeyDown={handleKeydown}
-              sx={{ width: 55 }}
-              InputProps={{
-                hiddenLabel: true,
-                disableUnderline: true,
-              }}
-              inputProps={{
-                inputMode: 'numeric',
-                sx: {
-                  textAlign: 'center',
-                  backgroundColor: (theme: Theme) =>
-                    theme.palette.background.default,
-                },
-              }}
+          {getIcon(icon)}
+          <Typography>{name}</Typography>
+        </Stack>
+        <Stack
+          direction="row"
+          spacing={1}
+          justifyContent="flex-end"
+          sx={{ width: '30%', flexShrink: 0, margin: 'auto 0' }}
+        >
+          {updateError && (
+            <ErrorOutline
+              aria-label="An error has occurred"
+              color="error"
+              sx={{ margin: 'auto' }}
             />
-          </Stack>
-        </AccordionSummary>
-        <AccordionDetails>
-          <NumberIncrementer
-            selectValues={incrementSettings.selectValues}
-            defaultSelectedValue={incrementSettings.defaultSelectedValue}
-            increment={{ callback: handleAmountChange }}
-            decrement={{ callback: handleAmountChange }}
-          />
-          {updated && timeSinceUpdate && (
-            <Timestamp date={new Date(updated)} timeLapsed={timeSinceUpdate} />
           )}
-        </AccordionDetails>
-      </Accordion>
-    </>
+          {updateSubmitting && !updateError && (
+            <Box m="auto" pt="5px" aria-label="Submitting">
+              <CircularProgress color="inherit" size={20} />
+            </Box>
+          )}
+          {updateSuccess && !updateError && !updateSubmitting && (
+            <CheckCircleOutline
+              aria-label="Successfully updated"
+              color="success"
+              sx={{ margin: 'auto' }}
+            />
+          )}
+
+          <TextField
+            variant="filled"
+            inputRef={textInput}
+            value={totalAmount}
+            onFocus={handleFocus}
+            aria-label="quantity"
+            onChange={(e) => {
+              if (!isNaN(Number(e.target.value))) {
+                setTotalAmount(Number(e.target.value));
+              }
+            }}
+            onKeyDown={handleKeydown}
+            sx={{ width: 55 }}
+            InputProps={{
+              hiddenLabel: true,
+              disableUnderline: true,
+            }}
+            inputProps={{
+              inputMode: 'numeric',
+              sx: {
+                textAlign: 'center',
+                backgroundColor: (theme: Theme) =>
+                  theme.palette.background.default,
+              },
+            }}
+          />
+        </Stack>
+      </AccordionSummary>
+      <AccordionDetails>
+        <NumberIncrementer
+          selectValues={incrementSettings.selectValues}
+          defaultSelectedValue={incrementSettings.defaultSelectedValueIndex}
+          increment={{ callback: handleAmountChange }}
+          decrement={{ callback: handleAmountChange }}
+          onSelectChange={updateSelectDefault}
+        />
+        {updated && timeSinceUpdate && (
+          <Timestamp date={new Date(updated)} timeLapsed={timeSinceUpdate} />
+        )}
+      </AccordionDetails>
+    </Accordion>
   );
 };
 
