@@ -212,7 +212,9 @@ const MedicationCard = ({
           onSelectChange={updateSelectDefault}
         />
         {updated && timeSinceUpdate && (
-          <Timestamp date={new Date(updated)} timeLapsed={timeSinceUpdate} />
+          <Box textAlign="right" pt={2}>
+            <Timestamp date={new Date(updated)} timeLapsed={timeSinceUpdate} />
+          </Box>
         )}
       </AccordionDetails>
     </Accordion>
