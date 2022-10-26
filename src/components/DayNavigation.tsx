@@ -3,7 +3,7 @@ import ArrowForwardIos from '@mui/icons-material/ArrowForwardIos';
 import { Grid, Paper, Typography, IconButton } from '@mui/material';
 import { format, isToday } from 'date-fns';
 
-interface DayNavgationProps {
+interface DayNavigationProps {
   selectedDate: Date;
   hitPrevLimit: boolean;
   hitNextLimit: boolean;
@@ -17,7 +17,7 @@ const DayNavigation = ({
   hitNextLimit,
   prevCallback,
   nextCallback,
-}: DayNavgationProps) => {
+}: DayNavigationProps) => {
   const isDateToday = isToday(selectedDate);
   const day = isDateToday ? 'Today' : format(selectedDate, 'eeee');
   const title = format(selectedDate, 'PPP');

@@ -88,7 +88,7 @@ const MedicationCard = ({
   handleUpdate,
 }: MedicationCardProps) => {
   const [totalAmount, setTotalAmount] = useState<number>(amount);
-  const debouncedUpdate = useCallback(debounce(handleUpdate, 500), []);
+  const debouncedUpdate = useCallback(debounce(handleUpdate, 1000), []);
   const textInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
