@@ -13,6 +13,7 @@ const defaultProps = {
     callback: vi.fn(),
     enabled: true,
   },
+  onSelectChange: vi.fn(),
 };
 
 describe('<NumberIncrementer', () => {
@@ -79,7 +80,7 @@ describe('<NumberIncrementer', () => {
     ).toBeDisabled();
   });
 
-  it('executes callbacks', async () => {
+  it('executes increment and decrement callbacks', async () => {
     const mockIncrement = {
       callback: vi.fn(),
     };
@@ -112,5 +113,26 @@ describe('<NumberIncrementer', () => {
       defaultProps.selectValues[defaultProps.defaultSelectedValue],
       'SUBTRACT'
     );
+  });
+
+  it('executes onSelectChange callback', async () => {
+    const mockOnSelectChange = vi.fn();
+    const index = 2;
+
+    const { user } = render(
+      <NumberIncrementer
+        {...defaultProps}
+        onSelectChange={mockOnSelectChange}
+      />
+    );
+
+    await user.click(
+      screen.getByRole('button', {
+        name: defaultProps.selectValues[index].toString(),
+        exact: false,
+      })
+    );
+
+    expect(mockOnSelectChange).toHaveBeenCalledWith(index);
   });
 });
