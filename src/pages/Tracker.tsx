@@ -40,15 +40,15 @@ const Tracker = () => {
 
   const handleMedicationUpdate = ({
     quantity,
-    medicineId,
+    medicationId,
     id,
   }: {
     quantity: number;
-    medicineId: number;
+    medicationId: number;
     id?: number;
   }) => {
     const updatedMedication = medicationsForToday?.find(
-      (med) => med.user_medicine_id === medicineId
+      (med) => med.user_medication_id === medicationId
     );
 
     // handle if no meds found or no id
@@ -58,14 +58,14 @@ const Tracker = () => {
           id,
           quantity: quantity || 0,
           date: selectedDay,
-          user_medicine_id: updatedMedication.user_medicine_id,
+          user_medication_id: updatedMedication.user_medication_id,
         });
       } else {
         updateMedicationLog({
           quantity: quantity || 0,
           date: selectedDay,
           user_id: updatedMedication.user_id,
-          user_medicine_id: updatedMedication.user_medicine_id,
+          user_medication_id: updatedMedication.user_medication_id,
         });
       }
     }
@@ -84,9 +84,9 @@ const Tracker = () => {
     setSelectedDay(format(new Date(), API_DATE_FORMAT));
   };
 
-  const handleExpand = (medicineId: number, expandedStatus: boolean) => {
+  const handleExpand = (medicationId: number, expandedStatus: boolean) => {
     const updatedExpandedStatus = { ...expanded };
-    updatedExpandedStatus[selectedDay][medicineId] = !expandedStatus;
+    updatedExpandedStatus[selectedDay][medicationId] = !expandedStatus;
     setExpanded(updatedExpandedStatus);
   };
 
@@ -112,7 +112,7 @@ const Tracker = () => {
       if (!expanded?.[selectedDay]) {
         const expandedStatus: ExpandedCard = { [selectedDay]: {} };
         medicationsForTheWeek[selectedDay].forEach((med: MedicationLog) => {
-          expandedStatus[selectedDay][med.user_medicine_id] = false;
+          expandedStatus[selectedDay][med.user_medication_id] = false;
         });
         setExpanded({ ...expanded, ...expandedStatus });
       }
@@ -125,7 +125,8 @@ const Tracker = () => {
       const todaysMeds = [...medicationsForToday];
       const indexOfMedicaiton = todaysMeds.findIndex(
         (med) =>
-          med.user_medicine_id === response[selectedDay]?.data?.user_medicine_id
+          med.user_medication_id ===
+          response[selectedDay]?.data?.user_medication_id
       );
       todaysMeds.splice(indexOfMedicaiton, 1, response[selectedDay]?.data);
       weeksMeds[selectedDay] = todaysMeds;
@@ -202,26 +203,26 @@ const Tracker = () => {
                 icon={{ name: item.icon_key, color: item.icon_colour }}
                 amount={item.quantity}
                 id={item.id}
-                medicineId={item.user_medicine_id}
+                medicationId={item.user_medication_id}
                 incrementSettings={{
                   selectValues: item.increments,
                   defaultSelectedValueIndex: item.default_increment_index || 0,
                 }}
                 expanded={
-                  expanded?.[selectedDay]?.[item.user_medicine_id] || false
+                  expanded?.[selectedDay]?.[item.user_medication_id] || false
                 }
                 setExpanded={handleExpand}
                 updated={item.meta?.updated_at}
                 timeSinceUpdate={item.meta?.time_since_last_update}
                 updateError={
-                  updateError?.[selectedDay] === item.user_medicine_id
+                  updateError?.[selectedDay] === item.user_medication_id
                 }
                 updateSubmitting={
-                  submitting?.[selectedDay] === item.user_medicine_id
+                  submitting?.[selectedDay] === item.user_medication_id
                 }
                 updateSuccess={
-                  response?.[selectedDay]?.data?.user_medicine_id ===
-                  item.user_medicine_id
+                  response?.[selectedDay]?.data?.user_medication_id ===
+                  item.user_medication_id
                 }
                 handleUpdate={handleMedicationUpdate}
               />

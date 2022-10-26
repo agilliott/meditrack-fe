@@ -3,8 +3,8 @@ import apiClient from '../api/client';
 import useAuth from './useAuth';
 
 export interface UpdateMedicationProps {
-  user_medicine_id: number;
-  medicine_category_id?: number;
+  user_medication_id: number;
+  medication_category_id?: number;
   title?: string;
   icon_key?: string;
   icon_colour?: string;
@@ -14,7 +14,7 @@ export interface UpdateMedicationProps {
 }
 
 export interface CreateMedicationProps {
-  medicine_category_id: number;
+  medication_category_id: number;
   title: string;
   icon_key: string;
   icon_colour: string;
@@ -24,9 +24,9 @@ export interface CreateMedicationProps {
   measurements: string[];
 }
 
-interface Medicine {
+interface Medication {
   id: number;
-  medicine_category_id: number;
+  medication_category_id: number;
   title: string;
   icon_key: string;
   icon_colour: string;
@@ -40,14 +40,14 @@ interface Medicine {
   };
 }
 
-interface MedicineLog {
+interface MedicationLog {
   [key: number]: boolean;
 }
 
 export default function useUpdateMedication() {
-  const [response, setResponse] = useState<Medicine | null>(null);
-  const [error, setError] = useState<MedicineLog | null>(null);
-  const [submitting, setSubmitting] = useState<MedicineLog | null>(null);
+  const [response, setResponse] = useState<Medication | null>(null);
+  const [error, setError] = useState<MedicationLog | null>(null);
+  const [submitting, setSubmitting] = useState<MedicationLog | null>(null);
   const controllerRef = useRef<AbortController | null>();
   const { onLogout, handleSetAuthError } = useAuth();
 
@@ -55,7 +55,7 @@ export default function useUpdateMedication() {
     payload: CreateMedicationProps | UpdateMedicationProps
   ) => {
     const key =
-      'user_medicine_id' in payload ? payload?.user_medicine_id : 'new';
+      'user_medication_id' in payload ? payload?.user_medication_id : 'new';
     setSubmitting({ [key]: true });
     setError(null);
 
@@ -67,17 +67,18 @@ export default function useUpdateMedication() {
     controllerRef.current = controller;
 
     const updateClient =
-      'user_medicine_id' in payload ? apiClient.put : apiClient.post;
+      'user_medication_id' in payload ? apiClient.put : apiClient.post;
     const updateUrl =
-      'user_medicine_id' in payload
-        ? `/medicine/${payload.user_medicine_id}`
-        : '/medicine';
+      'user_medication_id' in payload
+        ? `/medication/${payload.user_medication_id}`
+        : '/medication';
 
     updateClient(updateUrl, payload, {
       signal: controllerRef.current?.signal,
     })
       .then((response) => setResponse(response.data))
       .catch((err) => {
+        console.log(err);
         if (
           err.response?.statusText === 'Unauthorized' ||
           err.response?.data?.message === 'Unauthenticated.'

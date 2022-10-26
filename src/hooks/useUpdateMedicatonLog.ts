@@ -4,7 +4,7 @@ import useAuth from './useAuth';
 
 interface BaseMedicationLogApiProps {
   date: string;
-  user_medicine_id: number;
+  user_medication_id: number;
 }
 
 export interface UpdateMedicationLogProps extends BaseMedicationLogApiProps {
@@ -20,9 +20,9 @@ export interface CreateMedicationLogProps extends BaseMedicationLogApiProps {
 
 export interface MedicationLog {
   id?: number;
-  medicine_category_id: number;
+  medication_category_id: number;
   user_id: number;
-  user_medicine_id: number;
+  user_medication_id: number;
   icon_colour: string;
   icon_key: string;
   increments: [number];
@@ -58,7 +58,7 @@ export default function useUpdateMedicationLog() {
   const updateMedicationLog = (
     payload: CreateMedicationLogProps | UpdateMedicationLogProps
   ) => {
-    setSubmitting({ [payload.date]: payload.user_medicine_id });
+    setSubmitting({ [payload.date]: payload.user_medication_id });
     setError(null);
 
     if (controllerRef.current) {
@@ -84,7 +84,7 @@ export default function useUpdateMedicationLog() {
           onLogout();
         }
         if (err.code !== 'ERR_CANCELED')
-          setError({ [payload.date]: payload.user_medicine_id });
+          setError({ [payload.date]: payload.user_medication_id });
       })
       .finally(() => {
         controllerRef.current = null;

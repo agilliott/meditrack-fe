@@ -6,7 +6,7 @@ const defaultProps = {
   icon: { name: 'INSULIN', color: 'blue1' },
   amount: 10,
   id: 1,
-  medicineId: 2,
+  medicationId: 2,
   incrementSettings: {
     selectValues: [2, 3, 5],
     defaultSelectedValueIndex: 1,
@@ -39,7 +39,7 @@ describe('<MedicationCard />', () => {
       screen.getByRole('button', { name: defaultProps.name, exact: false })
     );
     expect(mockSetExpand).toHaveBeenCalledWith(
-      defaultProps.medicineId,
+      defaultProps.medicationId,
       defaultProps.expanded
     );
   });

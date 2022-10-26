@@ -34,7 +34,7 @@ export interface MedicationCardProps {
   icon?: Icon;
   amount: number;
   id?: number;
-  medicineId: number;
+  medicationId: number;
   incrementSettings: {
     selectValues: number[];
     defaultSelectedValueIndex: number;
@@ -46,15 +46,15 @@ export interface MedicationCardProps {
   updateSuccess: boolean;
   handleUpdate: ({
     quantity,
-    medicineId,
+    medicationId,
     id,
   }: {
     quantity: number;
-    medicineId: number;
+    medicationId: number;
     id?: number;
   }) => void;
   expanded: boolean;
-  setExpanded: (medicineId: number, expandedStatus: boolean) => void;
+  setExpanded: (medicationId: number, expandedStatus: boolean) => void;
 }
 
 const iconMap: { [index: string]: (props: SvgIconProps) => JSX.Element } = {
@@ -79,7 +79,7 @@ const MedicationCard = ({
   incrementSettings,
   updated,
   id,
-  medicineId,
+  medicationId,
   timeSinceUpdate,
   updateError = false,
   updateSubmitting = false,
@@ -95,7 +95,7 @@ const MedicationCard = ({
 
   useEffect(() => {
     if (totalAmount != amount) {
-      debouncedUpdate({ quantity: totalAmount, medicineId, id });
+      debouncedUpdate({ quantity: totalAmount, medicationId, id });
     }
   }, [totalAmount]);
 
@@ -103,7 +103,7 @@ const MedicationCard = ({
     event.target.select();
 
   const handleExpand = () => {
-    setExpanded(medicineId, expanded);
+    setExpanded(medicationId, expanded);
   };
 
   const handleAmountChange = (value: number, operator: OperatorType) => {
@@ -117,7 +117,7 @@ const MedicationCard = ({
 
   const updateSelectDefault = (index: number) => {
     updateMedication({
-      user_medicine_id: medicineId,
+      user_medication_id: medicationId,
       default_increment_index: index,
     });
   };
