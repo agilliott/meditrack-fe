@@ -1,31 +1,14 @@
+import { useEffect, useState } from 'react';
 import { Fab, Grid, Skeleton, Typography, Box } from '@mui/material';
 import { format, add, sub, isToday, isSameDay } from 'date-fns';
 import { Vaccines, LastPage, ErrorOutline } from '@mui/icons-material';
 
-import useFetchData from '../hooks/useFetchData';
-import { DayNavigation, MedicationCard } from '../components';
-import { useEffect, useState } from 'react';
-import { useUpdateMedication } from '../hooks';
+import { useUpdateMedicatonLog, useFetchData, MedicationLog } from '../hooks';
+import { DayNavigation, MedicationLogCard } from '../components';
 import { API_DATE_FORMAT } from '../utils/formatting';
-export interface TrackerData {
-  id?: number;
-  medicine_category_id: number;
-  user_id: number;
-  user_medicine_id: number;
-  icon_colour: string; //CHANGE NAME BECAUSE WE DONT WANT INCONSISTENCIES THAT WASTE TIME
-  icon_key: string;
-  increments: [number];
-  quantity: number;
-  title: string;
-  meta?: {
-    created_at?: string;
-    updated_at?: string;
-    time_since_last_update?: string;
-  };
-}
 
 interface WeekData {
-  [key: string]: TrackerData[];
+  [key: string]: MedicationLog[];
 }
 
 type ExpandedCard = {
@@ -44,45 +27,45 @@ const Tracker = () => {
   const [medicationsForTheWeek, setMedicationsForTheWeek] =
     useState<WeekData | null>(null);
   const [medicationsForToday, setMedicationsForToday] = useState<
-    TrackerData[] | null
+    MedicationLog[] | null
   >(null);
 
-  const { data, loading, error } = useFetchData('/tracker');
+  const { data, loading, error } = useFetchData(`/tracker?date=${selectedDay}`);
   const {
-    updateMedication,
+    updateMedicationLog,
     response,
     submitting,
     error: updateError,
-  } = useUpdateMedication();
+  } = useUpdateMedicatonLog();
 
   const handleMedicationUpdate = ({
     quantity,
-    medicineId,
+    medicationId,
     id,
   }: {
     quantity: number;
-    medicineId: number;
+    medicationId: number;
     id?: number;
   }) => {
     const updatedMedication = medicationsForToday?.find(
-      (med) => med.user_medicine_id === medicineId
+      (med) => med.user_medication_id === medicationId
     );
 
     // handle if no meds found or no id
     if (updatedMedication) {
       if (id) {
-        updateMedication({
+        updateMedicationLog({
           id,
           quantity: quantity || 0,
           date: selectedDay,
-          user_medicine_id: updatedMedication.user_medicine_id,
+          user_medication_id: updatedMedication.user_medication_id,
         });
       } else {
-        updateMedication({
+        updateMedicationLog({
           quantity: quantity || 0,
           date: selectedDay,
           user_id: updatedMedication.user_id,
-          user_medicine_id: updatedMedication.user_medicine_id,
+          user_medication_id: updatedMedication.user_medication_id,
         });
       }
     }
@@ -101,9 +84,9 @@ const Tracker = () => {
     setSelectedDay(format(new Date(), API_DATE_FORMAT));
   };
 
-  const handleExpand = (medicineId: number, expandedStatus: boolean) => {
+  const handleExpand = (medicationId: number, expandedStatus: boolean) => {
     const updatedExpandedStatus = { ...expanded };
-    updatedExpandedStatus[selectedDay][medicineId] = !expandedStatus;
+    updatedExpandedStatus[selectedDay][medicationId] = !expandedStatus;
     setExpanded(updatedExpandedStatus);
   };
 
@@ -128,8 +111,8 @@ const Tracker = () => {
 
       if (!expanded?.[selectedDay]) {
         const expandedStatus: ExpandedCard = { [selectedDay]: {} };
-        medicationsForTheWeek[selectedDay].forEach((med: TrackerData) => {
-          expandedStatus[selectedDay][med.user_medicine_id] = false;
+        medicationsForTheWeek[selectedDay].forEach((med: MedicationLog) => {
+          expandedStatus[selectedDay][med.user_medication_id] = false;
         });
         setExpanded({ ...expanded, ...expandedStatus });
       }
@@ -142,7 +125,8 @@ const Tracker = () => {
       const todaysMeds = [...medicationsForToday];
       const indexOfMedicaiton = todaysMeds.findIndex(
         (med) =>
-          med.user_medicine_id === response[selectedDay]?.data?.user_medicine_id
+          med.user_medication_id ===
+          response[selectedDay]?.data?.user_medication_id
       );
       todaysMeds.splice(indexOfMedicaiton, 1, response[selectedDay]?.data);
       weeksMeds[selectedDay] = todaysMeds;
@@ -151,8 +135,18 @@ const Tracker = () => {
   }, [response, selectedDay]);
 
   return (
-    <Grid container spacing={2} padding={2} mb={isDateToday ? '55px' : '120px'}>
-      <Grid item xs={12} textAlign="center">
+    <>
+      <Box
+        width="100%"
+        maxWidth="600px"
+        minWidth="340px"
+        position="fixed"
+        zIndex={1}
+        p={2}
+        sx={{
+          backgroundColor: (theme) => theme.palette.background.paper,
+        }}
+      >
         <DayNavigation
           selectedDate={new Date(selectedDay)}
           hitPrevLimit={isPrevLimit}
@@ -160,84 +154,94 @@ const Tracker = () => {
           prevCallback={prevDayClick}
           nextCallback={nextDayClick}
         />
-      </Grid>
-      {loading && !error && (
-        <Grid item xs={12}>
-          <Skeleton height={120} />
-          <Skeleton height={120} />
-          <Skeleton height={120} />
-        </Grid>
-      )}
-      {error && (
-        <Grid item xs={12} textAlign="center" sx={{ marginTop: '30vh' }}>
-          <Box>
-            <ErrorOutline fontSize="large" />
-          </Box>
-          <Typography variant="caption">
-            There has been a problem loading medications
-          </Typography>
-        </Grid>
-      )}
-      {!medicationsForToday && !loading && !error && (
-        <Grid item xs={12} textAlign="center" sx={{ marginTop: '30vh' }}>
-          <Box>
-            <Vaccines fontSize="large" />
-          </Box>
-          <Typography variant="caption">
-            No medications listed for today
-          </Typography>
-        </Grid>
-      )}
-      {!loading &&
-        !error &&
-        medicationsForToday &&
-        medicationsForToday.map((item) => (
-          <Grid
-            item
-            xs={12}
-            key={item.id ? item.id : `${selectedDay}-${item.title}`}
-          >
-            <MedicationCard
-              name={item.title}
-              icon={{ name: item.icon_key, color: item.icon_colour }}
-              amount={item.quantity}
-              id={item.id}
-              medicineId={item.user_medicine_id}
-              incrementSettings={{
-                selectValues: item.increments,
-                defaultSelectedValue: item.increments[0],
-              }}
-              expanded={
-                expanded?.[selectedDay]?.[item.user_medicine_id] || false
-              }
-              setExpanded={handleExpand}
-              updated={item.meta?.updated_at}
-              timeSinceUpdate={item.meta?.time_since_last_update}
-              updateError={updateError?.[selectedDay] === item.user_medicine_id}
-              updateSubmitting={
-                submitting?.[selectedDay] === item.user_medicine_id
-              }
-              updateSuccess={
-                response?.[selectedDay]?.data?.user_medicine_id ===
-                item.user_medicine_id
-              }
-              handleUpdate={handleMedicationUpdate}
-            />
+      </Box>
+      <Grid
+        container
+        spacing={2}
+        padding={2}
+        mt="50px"
+        mb={isDateToday ? '55px' : '120px'}
+      >
+        {loading && !error && (
+          <Grid item xs={12}>
+            <Skeleton height={120} />
+            <Skeleton height={120} />
+            <Skeleton height={120} />
           </Grid>
-        ))}
-      {!isDateToday && (
-        <Grid item xs={12}>
-          <Fab
-            onClick={skipToTodayClick}
-            color="primary"
-            aria-label="Skip to today"
-            sx={{ position: 'fixed', bottom: '70px', right: '20px' }}
-          >
-            <LastPage />
-          </Fab>
-        </Grid>
-      )}
-    </Grid>
+        )}
+        {error && (
+          <Grid item xs={12} textAlign="center" sx={{ marginTop: '30vh' }}>
+            <Box>
+              <ErrorOutline fontSize="large" />
+            </Box>
+            <Typography variant="caption">
+              There has been a problem loading medications
+            </Typography>
+          </Grid>
+        )}
+        {!medicationsForToday && !loading && !error && (
+          <Grid item xs={12} textAlign="center" sx={{ marginTop: '30vh' }}>
+            <Box>
+              <Vaccines fontSize="large" />
+            </Box>
+            <Typography variant="caption">
+              No medications listed for today
+            </Typography>
+          </Grid>
+        )}
+        {!loading &&
+          !error &&
+          medicationsForToday &&
+          medicationsForToday.map((item) => (
+            <Grid
+              item
+              xs={12}
+              key={item.id ? item.id : `${selectedDay}-${item.title}`}
+            >
+              <MedicationLogCard
+                name={item.title}
+                icon={{ name: item.icon_key, color: item.icon_colour }}
+                amount={item.quantity}
+                id={item.id}
+                medicationId={item.user_medication_id}
+                incrementSettings={{
+                  selectValues: item.increments,
+                  defaultSelectedValueIndex: item.default_increment_index || 0,
+                }}
+                expanded={
+                  expanded?.[selectedDay]?.[item.user_medication_id] || false
+                }
+                setExpanded={handleExpand}
+                updated={item.meta?.updated_at}
+                timeSinceUpdate={item.meta?.time_since_last_update}
+                updateError={
+                  updateError?.[selectedDay] === item.user_medication_id
+                }
+                updateSubmitting={
+                  submitting?.[selectedDay] === item.user_medication_id
+                }
+                updateSuccess={
+                  response?.[selectedDay]?.data?.user_medication_id ===
+                  item.user_medication_id
+                }
+                handleUpdate={handleMedicationUpdate}
+              />
+            </Grid>
+          ))}
+        {!isDateToday && (
+          <Grid item xs={12}>
+            <Fab
+              onClick={skipToTodayClick}
+              color="primary"
+              aria-label="Skip to today"
+              sx={{ position: 'fixed', bottom: '70px', right: '20px' }}
+            >
+              <LastPage />
+            </Fab>
+          </Grid>
+        )}
+      </Grid>
+    </>
   );
 };
 

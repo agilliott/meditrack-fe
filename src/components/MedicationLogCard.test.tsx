@@ -1,15 +1,15 @@
 import { render, screen } from '../test/test-utils';
-import MedicationCard from './MedicationCard';
+import MedicationCard from './MedicationLogCard';
 
 const defaultProps = {
   name: 'My meds',
   icon: { name: 'INSULIN', color: 'blue1' },
   amount: 10,
   id: 1,
-  medicineId: 2,
+  medicationId: 2,
   incrementSettings: {
     selectValues: [2, 3, 5],
-    defaultSelectedValue: 1,
+    defaultSelectedValueIndex: 1,
   },
   updated: '2022-10-23',
   timeSinceUpdate: '50 minutes ago',
@@ -39,7 +39,7 @@ describe('<MedicationCard />', () => {
       screen.getByRole('button', { name: defaultProps.name, exact: false })
     );
     expect(mockSetExpand).toHaveBeenCalledWith(
-      defaultProps.medicineId,
+      defaultProps.medicationId,
       defaultProps.expanded
     );
   });
@@ -64,7 +64,7 @@ describe('<MedicationCard />', () => {
   it('sets the increment options correctly', () => {
     const mockincrementSettings = {
       selectValues: [2, 6, 8],
-      defaultSelectedValue: 2,
+      defaultSelectedValueIndex: 2,
     };
     render(
       <MedicationCard
@@ -135,7 +135,7 @@ describe('<MedicationCard />', () => {
     const newAmount =
       defaultProps.amount +
       defaultProps.incrementSettings.selectValues[
-        defaultProps.incrementSettings.defaultSelectedValue
+        defaultProps.incrementSettings.defaultSelectedValueIndex
       ];
 
     expect(screen.getByRole('textbox')).toHaveValue(newAmount.toString());
@@ -177,4 +177,19 @@ describe('<MedicationCard />', () => {
       defaultProps.amount.toString()
     );
   });
+
+  it('Blurs input on enter key press', async () => {
+    const { user } = render(<MedicationCard {...defaultProps} />);
+    const input = screen.getByRole('textbox');
+
+    await user.click(input);
+
+    expect(input).toHaveFocus();
+
+    await user.keyboard('{enter}');
+
+    expect(input).not.toHaveFocus();
+  });
+
+  // Test: It calls hook on change
 });

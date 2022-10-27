@@ -1,45 +1,64 @@
 import { useEffect, useRef, useState } from 'react';
 import apiClient from '../api/client';
-import { TrackerData } from '../pages/Tracker';
 import useAuth from './useAuth';
 
-interface BaseMedicationApiProps {
+interface BaseMedicationLogApiProps {
   date: string;
-  user_medicine_id: number;
+  user_medication_id: number;
 }
 
-export interface UpdateMedicationProps extends BaseMedicationApiProps {
+export interface UpdateMedicationLogProps extends BaseMedicationLogApiProps {
   id: number;
   quantity: number;
 }
 
-export interface CreateMedicationProps extends BaseMedicationApiProps {
+export interface CreateMedicationLogProps extends BaseMedicationLogApiProps {
   quantity: number;
   date: string;
   user_id: number;
 }
 
-interface DayMedicineLog {
-  [key: string]: number;
-}
-
-interface DayMedicineResponse {
-  [key: string]: {
-    data: TrackerData;
+export interface MedicationLog {
+  id?: number;
+  medication_category_id: number;
+  user_id: number;
+  user_medication_id: number;
+  icon_colour: string;
+  icon_key: string;
+  increments: [number];
+  default_increment_index: number;
+  quantity: number;
+  title: string;
+  meta?: {
+    created_at?: string;
+    updated_at?: string;
+    time_since_last_update?: string;
   };
 }
 
-export default function useUpdateMedication() {
-  const [response, setResponse] = useState<DayMedicineResponse | null>(null);
-  const [error, setError] = useState<DayMedicineLog | null>(null);
-  const [submitting, setSubmitting] = useState<DayMedicineLog | null>(null);
+interface DayMedicationLog {
+  [key: string]: number;
+}
+
+interface DayMedicationLogResponse {
+  [key: string]: {
+    data: MedicationLog;
+  };
+}
+
+export default function useUpdateMedicationLog() {
+  const [response, setResponse] = useState<DayMedicationLogResponse | null>(
+    null
+  );
+  const [error, setError] = useState<DayMedicationLog | null>(null);
+  const [submitting, setSubmitting] = useState<DayMedicationLog | null>(null);
   const controllerRef = useRef<AbortController | null>();
   const { onLogout, handleSetAuthError } = useAuth();
 
-  const updateMedication = (
-    payload: CreateMedicationProps | UpdateMedicationProps
+  const updateMedicationLog = (
+    payload: CreateMedicationLogProps | UpdateMedicationLogProps
   ) => {
-    setSubmitting({ [payload.date]: payload.user_medicine_id });
+    setSubmitting({ [payload.date]: payload.user_medication_id });
     setError(null);
 
     if (controllerRef.current) {
@@ -61,11 +80,11 @@ export default function useUpdateMedication() {
           err.response?.statusText === 'Unauthorized' ||
           err.response?.data?.message === 'Unauthenticated.'
         ) {
-          handleSetAuthError(true);
+          handleSetAuthError({ expired: true, unauthorised: false });
           onLogout();
         }
         if (err.code !== 'ERR_CANCELED')
-          setError({ [payload.date]: payload.user_medicine_id });
+          setError({ [payload.date]: payload.user_medication_id });
       })
       .finally(() => {
         controllerRef.current = null;
@@ -82,5 +101,5 @@ export default function useUpdateMedication() {
     }
   }, [error, response, submitting]);
 
-  return { updateMedication, response, error, submitting };
+  return { updateMedicationLog, response, error, submitting };
 }

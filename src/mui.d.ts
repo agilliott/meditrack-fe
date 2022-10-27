@@ -38,10 +38,3 @@ declare module '@mui/material/styles/createPalette' {
     };
   }
 }
-
-declare module '@mui/material/SVG' {
-  export interface ChipPropsColorOverrides {
-    facebook: true;
-    twitter: true;
-  }
-}

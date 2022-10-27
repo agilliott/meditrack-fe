@@ -3,6 +3,7 @@ import { render, screen } from '../test/test-utils';
 import NumberSelect from './NumberSelect';
 
 const defaultProps = {
+  index: 0,
   value: 1,
   selected: false,
   callback: vi.fn(),
@@ -25,7 +26,10 @@ describe('<NumberSelect />', () => {
 
     await user.click(screen.getByRole('button'));
 
-    expect(mockCallback).toHaveBeenCalledWith(defaultProps.value);
+    expect(mockCallback).toHaveBeenCalledWith(
+      defaultProps.value,
+      defaultProps.index
+    );
   });
 
   it('shows selected styles', async () => {

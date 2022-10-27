@@ -54,13 +54,15 @@ const Login = () => {
             <Typography variant="subtitle2">
               Log into your Meditrack account.
             </Typography>
-            {authError && (
+            {(authError.expired || authError.unauthorised) && (
               <Alert
                 severity="error"
                 variant="filled"
                 sx={{ marginTop: '10px' }}
               >
-                Credentials not recognised. Please try again.
+                {authError.expired
+                  ? 'Your session has expired.'
+                  : 'Credentials not recognised.'}
               </Alert>
             )}
             {unknownError && (

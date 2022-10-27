@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { Typography } from '@mui/material';
+import { Button } from '@mui/material';
 import { format } from 'date-fns';
 import TimerOutlined from '@mui/icons-material/TimerOutlined';
 import CalendarMonthOutlined from '@mui/icons-material/CalendarMonthOutlined';
-import { Stack } from '@mui/system';
 
 interface TimestampProps {
   date: Date;
@@ -24,27 +23,24 @@ const Timestamp = ({
   };
 
   return (
-    <Stack
-      direction="row"
-      spacing={1}
-      justifyContent="flex-end"
-      alignItems="center"
-      role="button"
-      aria-label={showTimer ? 'View date' : 'View time'}
-      textAlign="right"
-      pt={2}
+    <Button
+      variant="text"
       onClick={handleClick}
-      sx={{ color: (theme) => theme.palette.text.secondary, cursor: 'pointer' }}
+      endIcon={
+        showTimer ? (
+          <TimerOutlined fontSize="small" color="inherit" />
+        ) : (
+          <CalendarMonthOutlined fontSize="small" color="inherit" />
+        )
+      }
+      sx={{
+        color: (theme) => theme.palette.text.secondary,
+        cursor: 'pointer',
+        textTransform: 'none',
+      }}
     >
-      <Typography variant="subtitle2" color="inherit">
-        Last updated {showTimer ? timeLapsed : dateFormatted}
-      </Typography>
-      {showTimer ? (
-        <TimerOutlined fontSize="small" color="inherit" />
-      ) : (
-        <CalendarMonthOutlined fontSize="small" color="inherit" />
-      )}
-    </Stack>
+      Last updated {showTimer ? timeLapsed : dateFormatted}
+    </Button>
   );
 };
 

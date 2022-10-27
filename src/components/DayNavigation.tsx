@@ -3,7 +3,7 @@ import ArrowForwardIos from '@mui/icons-material/ArrowForwardIos';
 import { Grid, Paper, Typography, IconButton } from '@mui/material';
 import { format, isToday } from 'date-fns';
 
-interface DayNavgationProps {
+interface DayNavigationProps {
   selectedDate: Date;
   hitPrevLimit: boolean;
   hitNextLimit: boolean;
@@ -17,7 +17,7 @@ const DayNavigation = ({
   hitNextLimit,
   prevCallback,
   nextCallback,
-}: DayNavgationProps) => {
+}: DayNavigationProps) => {
   const isDateToday = isToday(selectedDate);
   const day = isDateToday ? 'Today' : format(selectedDate, 'eeee');
   const title = format(selectedDate, 'PPP');
@@ -31,7 +31,7 @@ const DayNavigation = ({
       }}
     >
       <Grid container justifyContent="space-between">
-        <Grid item>
+        <Grid item flexBasis="auto">
           <IconButton
             aria-label="Previous day"
             onClick={prevCallback}
@@ -48,6 +48,7 @@ const DayNavigation = ({
           sx={{
             lineHeight: 1,
             backgroundColor: (theme) => theme.palette.primary.dark,
+            textAlign: 'center',
           }}
         >
           <Typography
@@ -61,7 +62,7 @@ const DayNavigation = ({
             {title}
           </Typography>
         </Grid>
-        <Grid item>
+        <Grid item flexBasis="auto" textAlign="right">
           <IconButton
             aria-label="Next day"
             onClick={nextCallback}

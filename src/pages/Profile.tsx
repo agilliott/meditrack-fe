@@ -19,13 +19,7 @@ const Profile = () => {
   }, [logoutError, loading, loggedIn]);
 
   return (
-    <Grid
-      container
-      padding={2}
-      spacing={2}
-      alignContent="space-between"
-      sx={{ height: 'calc(100vh - 55px)' }}
-    >
+    <Grid container padding={2} spacing={2} alignContent="space-between">
       <Grid item xs={12}>
         <Typography variant="h1" gutterBottom>
           Profile
