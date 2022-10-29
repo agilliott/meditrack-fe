@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Stack,
   Accordion,
   AccordionDetails,
   AccordionSummary,
@@ -11,6 +10,7 @@ import {
   Box,
   Theme,
   Button,
+  Grid,
 } from '@mui/material';
 import {
   Medication,
@@ -102,7 +102,6 @@ const MedicationCard = ({
   }, [totalAmount]);
 
   const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
-    event.preventDefault();
     event.target.select();
   };
 
@@ -157,70 +156,73 @@ const MedicationCard = ({
           },
         }}
       >
-        <Stack
-          direction="row"
-          spacing={2}
-          alignItems="center"
-          sx={{ width: '70%', flexShrink: 0, margin: 'auto 0' }}
-          role="button"
-          onClick={handleExpand}
-        >
-          {getIcon(icon)}
-          <Typography>{name}</Typography>
-        </Stack>
-        <Stack
-          direction="row"
-          spacing={1}
-          justifyContent="flex-end"
-          sx={{ width: '30%', flexShrink: 0, margin: 'auto 0' }}
-        >
-          {updateError && (
-            <ErrorOutline
-              aria-label="An error has occurred"
-              color="error"
-              sx={{ margin: 'auto' }}
+        <Grid container>
+          <Grid item xs onClick={handleExpand} role="button">
+            <Grid
+              container
+              paddingRight={1}
+              columnSpacing={1}
+              alignItems="center"
+              height="100%"
+            >
+              <Grid item height="24px">
+                {getIcon(icon)}
+              </Grid>
+              <Grid item xs>
+                <Typography>{name}</Typography>
+              </Grid>
+              <Grid item height="24px">
+                {updateError && (
+                  <ErrorOutline
+                    aria-label="An error has occurred"
+                    color="error"
+                    sx={{ margin: 'auto' }}
+                  />
+                )}
+                {updateSubmitting && !updateError && (
+                  <Box m="auto" pt="5px" aria-label="Submitting">
+                    <CircularProgress color="inherit" size={20} />
+                  </Box>
+                )}
+                {updateSuccess && !updateError && !updateSubmitting && (
+                  <CheckCircleOutline
+                    aria-label="Successfully updated"
+                    color="success"
+                    sx={{ margin: 'auto' }}
+                  />
+                )}
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item>
+            <TextField
+              variant="filled"
+              inputRef={textInput}
+              value={totalAmount}
+              onFocus={handleFocus}
+              aria-label="quantity"
+              onChange={(e) => {
+                if (!isNaN(Number(e.target.value))) {
+                  setTotalAmount(Number(e.target.value));
+                }
+              }}
+              onKeyDown={handleKeydown}
+              sx={{ width: 55 }}
+              InputProps={{
+                hiddenLabel: true,
+                disableUnderline: true,
+              }}
+              inputProps={{
+                inputMode: 'numeric',
+                sx: {
+                  textAlign: 'center',
+                  backgroundColor: (theme: Theme) =>
+                    theme.palette.background.default,
+                },
+              }}
             />
-          )}
-          {updateSubmitting && !updateError && (
-            <Box m="auto" pt="5px" aria-label="Submitting">
-              <CircularProgress color="inherit" size={20} />
-            </Box>
-          )}
-          {updateSuccess && !updateError && !updateSubmitting && (
-            <CheckCircleOutline
-              aria-label="Successfully updated"
-              color="success"
-              sx={{ margin: 'auto' }}
-            />
-          )}
-
-          <TextField
-            variant="filled"
-            inputRef={textInput}
-            value={totalAmount}
-            onFocus={handleFocus}
-            aria-label="quantity"
-            onChange={(e) => {
-              if (!isNaN(Number(e.target.value))) {
-                setTotalAmount(Number(e.target.value));
-              }
-            }}
-            onKeyDown={handleKeydown}
-            sx={{ width: 55 }}
-            InputProps={{
-              hiddenLabel: true,
-              disableUnderline: true,
-            }}
-            inputProps={{
-              inputMode: 'numeric',
-              sx: {
-                textAlign: 'center',
-                backgroundColor: (theme: Theme) =>
-                  theme.palette.background.default,
-              },
-            }}
-          />
-        </Stack>
+          </Grid>
+        </Grid>
       </AccordionSummary>
       <AccordionDetails>
         <NumberIncrementer
