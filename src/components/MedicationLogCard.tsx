@@ -101,8 +101,10 @@ const MedicationCard = ({
     }
   }, [totalAmount]);
 
-  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) =>
+  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+    event.preventDefault();
     event.target.select();
+  };
 
   const handleExpand = () => {
     setExpanded(medicationId, expanded);
