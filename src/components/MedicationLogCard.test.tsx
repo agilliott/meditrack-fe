@@ -47,10 +47,10 @@ describe('<MedicationCard />', () => {
   it('shows content when expand is TRUE', () => {
     render(<MedicationCard {...defaultProps} />);
     expect(
-      screen.getByRole('button', { name: /subtract/i, exact: false })
+      screen.getByRole('button', { name: /decrement/i })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: /add/i, exact: false })
+      screen.getByRole('button', { name: /increment/i })
     ).toBeInTheDocument();
   });
 
@@ -128,9 +128,9 @@ describe('<MedicationCard />', () => {
       defaultProps.amount.toString()
     );
 
-    await user.click(
-      screen.getByRole('button', { name: /add/i, exact: false })
-    );
+    await user.click(screen.getByRole('button', { name: /increment/i }));
+
+    await user.click(screen.getByRole('button', { name: /add 3/i }));
 
     const newAmount =
       defaultProps.amount +
@@ -139,6 +139,9 @@ describe('<MedicationCard />', () => {
       ];
 
     expect(screen.getByRole('textbox')).toHaveValue(newAmount.toString());
+    expect(
+      screen.queryByRole('button', { name: /add 3/i })
+    ).not.toBeInTheDocument();
 
     await user.click(
       screen.getByRole('button', {
@@ -147,9 +150,9 @@ describe('<MedicationCard />', () => {
       })
     );
 
-    await user.click(
-      screen.getByRole('button', { name: /subtract/i, exact: false })
-    );
+    await user.click(screen.getByRole('button', { name: /decrement/i }));
+
+    await user.click(screen.getByRole('button', { name: /remove 2/i }));
 
     const nextAmount =
       newAmount - defaultProps.incrementSettings.selectValues[0];
@@ -162,9 +165,9 @@ describe('<MedicationCard />', () => {
 
     expect(screen.getByRole('textbox')).toHaveValue('1');
 
-    await user.click(
-      screen.getByRole('button', { name: /subtract/i, exact: false })
-    );
+    await user.click(screen.getByRole('button', { name: /decrement/i }));
+
+    await user.click(screen.getByRole('button', { name: /remove 3/i }));
 
     expect(screen.getByRole('textbox')).toHaveValue('0');
   });

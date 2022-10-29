@@ -51,7 +51,7 @@ const NumberIncrementer = ({
       <Grid item xs={2}>
         <IconButton
           color="primary"
-          aria-label={`Subtract ${selected}`}
+          aria-label="Decrement"
           onClick={handleSubtract}
           disabled={!dEnabled}
         >
@@ -75,7 +75,7 @@ const NumberIncrementer = ({
       <Grid item xs={2} textAlign="right">
         <IconButton
           color="primary"
-          aria-label={`Add ${selected}`}
+          aria-label="Increment"
           onClick={handleAdd}
           disabled={!iEnabled}
         >

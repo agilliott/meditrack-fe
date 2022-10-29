@@ -10,6 +10,7 @@ import {
   CircularProgress,
   Box,
   Theme,
+  Button,
 } from '@mui/material';
 import {
   Medication,
@@ -89,6 +90,7 @@ const MedicationCard = ({
   handleUpdate,
 }: MedicationCardProps) => {
   const [totalAmount, setTotalAmount] = useState<number>(amount);
+  const [changeAmount, setChangeAmount] = useState<number>(0);
   const debouncedUpdate = useCallback(debounce(handleUpdate, 1000), []);
   const textInput = useRef<HTMLInputElement>(null);
   const { updateMedication } = useUpdateMedication();
@@ -106,13 +108,25 @@ const MedicationCard = ({
     setExpanded(medicationId, expanded);
   };
 
-  const handleAmountChange = (value: number, operator: OperatorType) => {
-    if (operator === 'ADD') {
-      setTotalAmount(totalAmount + value);
-    } else {
-      const subtractedAmount = totalAmount - value;
-      setTotalAmount(subtractedAmount < 0 ? 0 : subtractedAmount);
+  const handleButtonClick = () => {
+    let updatedTotal = 0;
+
+    if (changeAmount > 0) {
+      updatedTotal = totalAmount + changeAmount;
     }
+    if (changeAmount < 0) {
+      const minusAmout = totalAmount - changeAmount * -1;
+      updatedTotal = minusAmout < 0 ? 0 : minusAmout;
+    }
+
+    setTotalAmount(updatedTotal);
+    setChangeAmount(0);
+  };
+
+  const handleAmountChange = (value: number, operator: OperatorType) => {
+    setChangeAmount(
+      operator === 'ADD' ? changeAmount + value : changeAmount - value
+    );
   };
 
   const updateSelectDefault = (index: number) => {
@@ -128,6 +142,9 @@ const MedicationCard = ({
       textInput.current.blur();
     }
   };
+
+  const buttonLabel = changeAmount > 0 ? 'Add' : 'Remove';
+  const buttonAmount = changeAmount < 0 ? changeAmount * -1 : changeAmount;
 
   return (
     <Accordion expanded={expanded} elevation={1}>
@@ -211,8 +228,20 @@ const MedicationCard = ({
           decrement={{ callback: handleAmountChange }}
           onSelectChange={updateSelectDefault}
         />
+        {changeAmount !== 0 && (
+          <Box p={2}>
+            <Button
+              size="large"
+              variant="contained"
+              fullWidth
+              onClick={handleButtonClick}
+            >
+              {`${buttonLabel} ${buttonAmount}`}
+            </Button>
+          </Box>
+        )}
         {updated && timeSinceUpdate && (
-          <Box textAlign="right" pt={2}>
+          <Box textAlign="right" pt={changeAmount ? 0 : 2}>
             <Timestamp date={new Date(updated)} timeLapsed={timeSinceUpdate} />
           </Box>
         )}
