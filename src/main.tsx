@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { CookiesProvider } from 'react-cookie';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
@@ -9,6 +10,7 @@ import {
   PATH_ANALYSE,
   PATH_MEDICATION,
   PATH_PROFILE,
+  PATH_LOGIN,
 } from './routing/routes';
 import {
   Analyse,
@@ -48,18 +50,20 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: 'login',
+    path: PATH_LOGIN,
     element: <Login />,
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <AuthProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <RouterProvider router={router} />
-      </ThemeProvider>
-    </AuthProvider>
+    <CookiesProvider>
+      <AuthProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <RouterProvider router={router} />
+        </ThemeProvider>
+      </AuthProvider>
+    </CookiesProvider>
   </React.StrictMode>
 );
