@@ -9,6 +9,8 @@ import {
   Button,
   Box,
   Alert,
+  Checkbox,
+  FormControlLabel,
 } from '@mui/material';
 
 import logo from '../assets/logo.png';
@@ -18,6 +20,7 @@ import { PATH_TRACKER } from '../routing/routes';
 export type LoginInputs = {
   email: string;
   password: string;
+  rememberMe: boolean;
 };
 
 const Login = () => {
@@ -108,6 +111,12 @@ const Login = () => {
                     helperText={!!errors?.password && 'Required'}
                     fullWidth
                     {...register('password', { required: true })}
+                  />
+                </Grid>
+                <Grid item xs={!2}>
+                  <FormControlLabel
+                    control={<Checkbox {...register('rememberMe')} />}
+                    label="Remember me for 30 days"
                   />
                 </Grid>
 

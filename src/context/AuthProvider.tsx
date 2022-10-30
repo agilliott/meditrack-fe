@@ -1,6 +1,6 @@
 import { createContext, useState } from 'react';
 import { useCookies } from 'react-cookie';
-import { addDays } from 'date-fns';
+import { addDays, addHours } from 'date-fns';
 import apiClient from '../api/client';
 import { LoginInputs } from '../pages/Login';
 
@@ -51,12 +51,16 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         .post('/login', {
           email: data.email,
           password: data.password,
-          // remember me bool,
+          rememberMe: data.rememberMe,
         })
         .then((response) => {
           if (response.status === 204) {
             setLoggedIn(true);
-            setCookie(COOKIE, 'loggedIn', { expires: addDays(new Date(), 30) });
+            setCookie(COOKIE, 'loggedIn', {
+              expires: data.rememberMe
+                ? addDays(new Date(), 31)
+                : addHours(new Date(), 3),
+            });
           }
         })
         .catch((error) => {
