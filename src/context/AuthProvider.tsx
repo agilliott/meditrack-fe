@@ -54,7 +54,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
           remember_me: data.rememberMe,
         })
         .then((response) => {
-          if (response.status === 200) {
+          if (response.status === 204) {
             setLoggedIn(true);
             setCookie(COOKIE, 'loggedIn', {
               expires: data.rememberMe
@@ -88,7 +88,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       apiClient
         .post('/logout')
         .then((response) => {
-          if (response.status === 200) {
+          if (response.status === 204) {
             setLoggedIn(false);
             removeCookie(COOKIE);
           }
