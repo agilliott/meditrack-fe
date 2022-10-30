@@ -24,6 +24,7 @@ const Tracker = () => {
   const [expanded, setExpanded] = useState<ExpandedCard | null>(null);
   const [isNextLimit, setIsNextLimit] = useState<boolean>(false);
   const [isPrevLimit, setIsPrevLimit] = useState<boolean>(false);
+  const [dataTransforming, setDataTransforming] = useState<boolean>(true);
   const [medicationsForTheWeek, setMedicationsForTheWeek] =
     useState<WeekData | null>(null);
   const [medicationsForToday, setMedicationsForToday] = useState<
@@ -51,7 +52,6 @@ const Tracker = () => {
       (med) => med.user_medication_id === medicationId
     );
 
-    // handle if no meds found or no id
     if (updatedMedication) {
       if (id) {
         updateMedicationLog({
@@ -107,6 +107,7 @@ const Tracker = () => {
 
   useEffect(() => {
     if (medicationsForTheWeek?.[selectedDay]) {
+      setDataTransforming(true);
       setMedicationsForToday(medicationsForTheWeek[selectedDay]);
 
       if (!expanded?.[selectedDay]) {
@@ -116,6 +117,7 @@ const Tracker = () => {
         });
         setExpanded({ ...expanded, ...expandedStatus });
       }
+      setDataTransforming(false);
     }
   }, [medicationsForTheWeek, selectedDay, medicationsForToday]);
 
@@ -133,6 +135,19 @@ const Tracker = () => {
       setMedicationsForTheWeek(weeksMeds);
     }
   }, [response, selectedDay]);
+
+  if (error) {
+    return (
+      <Grid item xs={12} textAlign="center" sx={{ marginTop: '30vh' }}>
+        <Box>
+          <ErrorOutline fontSize="large" />
+        </Box>
+        <Typography variant="caption">
+          There has been a problem loading medications
+        </Typography>
+      </Grid>
+    );
+  }
 
   return (
     <>
@@ -162,24 +177,23 @@ const Tracker = () => {
         mt="50px"
         mb={isDateToday ? '55px' : '120px'}
       >
-        {loading && !error && (
-          <Grid item xs={12}>
-            <Skeleton height={120} />
-            <Skeleton height={120} />
-            <Skeleton height={120} />
-          </Grid>
+        {(loading || dataTransforming) && (
+          <>
+            <Grid item xs={12}>
+              <Skeleton height={80} sx={{ transform: 'none' }} />
+            </Grid>
+            <Grid item xs={12}>
+              <Skeleton height={80} sx={{ transform: 'none' }} />
+            </Grid>
+            <Grid item xs={12}>
+              <Skeleton height={80} sx={{ transform: 'none' }} />
+            </Grid>
+            <Grid item xs={12}>
+              <Skeleton height={80} sx={{ transform: 'none' }} />
+            </Grid>
+          </>
         )}
-        {error && (
-          <Grid item xs={12} textAlign="center" sx={{ marginTop: '30vh' }}>
-            <Box>
-              <ErrorOutline fontSize="large" />
-            </Box>
-            <Typography variant="caption">
-              There has been a problem loading medications
-            </Typography>
-          </Grid>
-        )}
-        {!medicationsForToday && !loading && !error && (
+        {!medicationsForToday && (
           <Grid item xs={12} textAlign="center" sx={{ marginTop: '30vh' }}>
             <Box>
               <Vaccines fontSize="large" />
@@ -189,9 +203,7 @@ const Tracker = () => {
             </Typography>
           </Grid>
         )}
-        {!loading &&
-          !error &&
-          medicationsForToday &&
+        {medicationsForToday &&
           medicationsForToday.map((item) => (
             <Grid
               item
