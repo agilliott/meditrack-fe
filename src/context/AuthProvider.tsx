@@ -51,7 +51,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         .post('/login', {
           email: data.email,
           password: data.password,
-          rememberMe: data.rememberMe,
+          remember_me: data.rememberMe,
         })
         .then((response) => {
           if (response.status === 204) {
