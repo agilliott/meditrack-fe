@@ -17,12 +17,19 @@ function App() {
   }, [loggedIn, loading]);
 
   return (
-    <Box sx={{ minWidth: '340px', maxWidth: '600px', margin: 'auto' }}>
-      <Grid container justifyContent="center" alignContent="center">
+    <Box
+      sx={{
+        minWidth: '340px',
+        maxWidth: '600px',
+        margin: 'auto',
+        height: '100%',
+      }}
+    >
+      <Grid container height="100%">
         <Grid item xs={12}>
           <Outlet />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs>
           <NavBar />
         </Grid>
       </Grid>

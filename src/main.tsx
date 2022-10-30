@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { CookiesProvider } from 'react-cookie';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import './main.css';
 
 import {
   PATH_TRACKER,
@@ -19,6 +20,7 @@ import {
   Medication,
   Profile,
   Tracker,
+  Home,
 } from './pages';
 
 import { AuthProvider } from './context/AuthProvider';
@@ -31,6 +33,10 @@ const router = createBrowserRouter([
     element: <App />,
     errorElement: <ErrorPage />,
     children: [
+      {
+        path: '/',
+        element: <Home />,
+      },
       {
         path: PATH_TRACKER,
         element: <Tracker />,
