@@ -11,35 +11,36 @@ export default function useFetchData(url: string) {
   const { onLogout, handleSetAuthError } = useAuth();
 
   useEffect(() => {
-    setLoading(true);
-    setError(null);
+    if (!data) {
+      setLoading(true);
+      setError(null);
+      if (controllerRef.current) {
+        controllerRef.current.abort();
+      }
 
-    if (controllerRef.current) {
-      controllerRef.current.abort();
+      const controller = new AbortController();
+      controllerRef.current = controller;
+
+      apiClient
+        .get(url, { signal: controllerRef.current?.signal })
+        .then((response) => response.data)
+        .then(setData)
+        .catch((err) => {
+          if (
+            err.response?.statusText === 'Unauthorized' ||
+            err.response?.data?.message === 'Unauthenticated.'
+          ) {
+            handleSetAuthError({ expired: true, unauthorised: false });
+            onLogout();
+          }
+          if (err.code !== 'ERR_CANCELED') setError(err);
+        })
+        .finally(() => {
+          setLoading(false);
+          controllerRef.current = null;
+        });
     }
-
-    const controller = new AbortController();
-    controllerRef.current = controller;
-
-    apiClient
-      .get(url, { signal: controllerRef.current?.signal })
-      .then((response) => response.data)
-      .then(setData)
-      .catch((err) => {
-        if (
-          err.response?.statusText === 'Unauthorized' ||
-          err.response?.data?.message === 'Unauthenticated.'
-        ) {
-          handleSetAuthError({ expired: true, unauthorised: false });
-          onLogout();
-        }
-        if (err.code !== 'ERR_CANCELED') setError(err);
-      })
-      .finally(() => {
-        setLoading(false);
-        controllerRef.current = null;
-      });
-  }, [url]);
+  }, [url, data]);
 
   return { data, error, loading };
 }
