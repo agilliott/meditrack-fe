@@ -54,7 +54,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
           remember_me: data.rememberMe,
         })
         .then((response) => {
-          if (response.status === 204) {
+          if (response.status === 200) {
             setLoggedIn(true);
             setCookie(COOKIE, 'loggedIn', {
               expires: data.rememberMe
