@@ -174,7 +174,7 @@ const Tracker = () => {
         container
         spacing={2}
         padding={2}
-        mt="50px"
+        mt="55px"
         mb={isDateToday ? '55px' : '120px'}
       >
         {(loading || dataTransforming) && (

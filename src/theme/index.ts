@@ -44,6 +44,7 @@ const themeOptions: ThemeOptions = {
     },
   },
   typography: {
+    fontFamily: '"Jost", "Roboto","Helvetica","Arial",sans-serif',
     h1: {
       fontSize: '2.5rem',
     },

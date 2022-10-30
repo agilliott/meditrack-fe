@@ -13,10 +13,20 @@ const NavBar = () => {
 
   return (
     <Paper
-      sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }}
+      sx={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        textTransform: 'uppercase',
+      }}
       elevation={3}
     >
-      <BottomNavigation showLabels value={routeKeyMap[route]}>
+      <BottomNavigation
+        showLabels
+        value={routeKeyMap[route]}
+        sx={{ backgroundColor: '#090909' }}
+      >
         <BottomNavigationAction
           component={NavLink}
           to="/tracker"
