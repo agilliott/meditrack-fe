@@ -242,14 +242,16 @@ const Tracker = () => {
           ))}
         {!isDateToday && (
           <Grid item xs={12}>
-            <Fab
-              onClick={skipToTodayClick}
-              color="primary"
-              aria-label="Skip to today"
-              sx={{ position: 'fixed', bottom: '70px', right: '20px' }}
-            >
-              <LastPage />
-            </Fab>
+            <Box sx={{ float: 'right', width: 56 }}>
+              <Fab
+                onClick={skipToTodayClick}
+                color="primary"
+                aria-label="Skip to today"
+                sx={{ position: 'fixed', bottom: '70px' }}
+              >
+                <LastPage />
+              </Fab>
+            </Box>
           </Grid>
         )}
       </Grid>
