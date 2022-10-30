@@ -15,11 +15,11 @@ import {
 } from '@mui/material';
 import {
   Medication,
-  MoreOutlined,
   PushPinOutlined,
   CheckCircleOutline,
   ErrorOutline,
   CancelOutlined,
+  Battery0BarOutlined,
 } from '@mui/icons-material';
 import debounce from 'lodash.debounce';
 
@@ -62,7 +62,7 @@ export interface MedicationCardProps {
 
 const iconMap: { [index: string]: (props: SvgIconProps) => JSX.Element } = {
   INSULIN: Medication,
-  TEST_STRIP: MoreOutlined,
+  TEST_STRIP: Battery0BarOutlined,
   NEEDLE: PushPinOutlined,
 };
 
