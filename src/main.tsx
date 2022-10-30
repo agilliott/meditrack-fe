@@ -12,6 +12,7 @@ import {
   PATH_MEDICATION,
   PATH_PROFILE,
   PATH_LOGIN,
+  PATH_HOME,
 } from './routing/routes';
 import {
   Analyse,
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
+        element: <Home />,
+      },
+      {
+        path: PATH_HOME,
         element: <Home />,
       },
       {
