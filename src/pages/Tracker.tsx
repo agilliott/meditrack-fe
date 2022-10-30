@@ -158,6 +158,7 @@ const Tracker = () => {
         position="fixed"
         zIndex={1}
         p={2}
+        pb={1}
         sx={{
           backgroundColor: (theme) => theme.palette.background.paper,
         }}
