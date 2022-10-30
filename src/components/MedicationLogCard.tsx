@@ -11,6 +11,7 @@ import {
   Theme,
   Button,
   Grid,
+  IconButton,
 } from '@mui/material';
 import {
   Medication,
@@ -18,6 +19,7 @@ import {
   PushPinOutlined,
   CheckCircleOutline,
   ErrorOutline,
+  CancelOutlined,
 } from '@mui/icons-material';
 import debounce from 'lodash.debounce';
 
@@ -234,14 +236,27 @@ const MedicationCard = ({
         />
         {changeAmount !== 0 && (
           <Box p={2}>
-            <Button
-              size="large"
-              variant="contained"
-              fullWidth
-              onClick={handleButtonClick}
-            >
-              {`${buttonLabel} ${buttonAmount}`}
-            </Button>
+            <Grid container columnGap={2}>
+              <Grid item xs>
+                <Button
+                  size="large"
+                  variant="contained"
+                  fullWidth
+                  onClick={handleButtonClick}
+                >
+                  {`${buttonLabel} ${buttonAmount}`}
+                </Button>
+              </Grid>
+              <Grid item>
+                <IconButton
+                  sx={{ opacity: '0.5' }}
+                  aria-label="Cancel change"
+                  onClick={() => setChangeAmount(0)}
+                >
+                  <CancelOutlined />
+                </IconButton>
+              </Grid>
+            </Grid>
           </Box>
         )}
         {updated && timeSinceUpdate && (
