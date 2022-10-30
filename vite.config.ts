@@ -13,6 +13,7 @@ export default defineConfig({
         enabled: true,
       },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      useCredentials: true,
       manifest: {
         name: 'Meditrack',
         short_name: 'Meditrack',
