@@ -116,7 +116,7 @@ const Login = () => {
                 <Grid item xs={!2}>
                   <FormControlLabel
                     control={<Checkbox {...register('rememberMe')} />}
-                    label="Remember me for 30 days"
+                    label="Remember me"
                   />
                 </Grid>
 

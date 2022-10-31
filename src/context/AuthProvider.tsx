@@ -51,10 +51,10 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         .post('/login', {
           email: data.email,
           password: data.password,
-          remember_me: data.rememberMe,
+          remember: data.rememberMe,
         })
         .then((response) => {
-          if (response.status === 200) {
+          if (response.status === 204) {
             setLoggedIn(true);
             setCookie(COOKIE, 'loggedIn', {
               expires: data.rememberMe
