@@ -21,10 +21,10 @@ describe('<NumberIncrementer', () => {
     render(<NumberIncrementer {...defaultProps} />);
 
     expect(
-      screen.getByRole('button', { name: /add/i, exact: false })
+      screen.getByRole('button', { name: /increment/i, exact: false })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: /subtract/i, exact: false })
+      screen.getByRole('button', { name: /decrement/i, exact: false })
     ).toBeInTheDocument();
     defaultProps.selectValues.forEach((value) => {
       expect(
@@ -49,10 +49,10 @@ describe('<NumberIncrementer', () => {
     );
 
     expect(
-      screen.getByRole('button', { name: /add/i, exact: false })
+      screen.getByRole('button', { name: /increment/i, exact: false })
     ).not.toBeDisabled();
     expect(
-      screen.getByRole('button', { name: /subtract/i, exact: false })
+      screen.getByRole('button', { name: /decrement/i, exact: false })
     ).not.toBeDisabled();
   });
   it('disabled buttons', () => {
@@ -73,10 +73,10 @@ describe('<NumberIncrementer', () => {
     );
 
     expect(
-      screen.getByRole('button', { name: /add/i, exact: false })
+      screen.getByRole('button', { name: /increment/i, exact: false })
     ).toBeDisabled();
     expect(
-      screen.getByRole('button', { name: /subtract/i, exact: false })
+      screen.getByRole('button', { name: /decrement/i, exact: false })
     ).toBeDisabled();
   });
 
@@ -97,7 +97,7 @@ describe('<NumberIncrementer', () => {
     );
 
     await user.click(
-      screen.getByRole('button', { name: /add/i, exact: false })
+      screen.getByRole('button', { name: /increment/i, exact: false })
     );
 
     expect(mockIncrement.callback).toHaveBeenCalledWith(
@@ -106,7 +106,7 @@ describe('<NumberIncrementer', () => {
     );
 
     await user.click(
-      screen.getByRole('button', { name: /subtract/i, exact: false })
+      screen.getByRole('button', { name: /decrement/i, exact: false })
     );
 
     expect(mockDecrement.callback).toHaveBeenCalledWith(

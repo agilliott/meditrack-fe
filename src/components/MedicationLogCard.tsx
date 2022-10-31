@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Stack,
   Accordion,
   AccordionDetails,
   AccordionSummary,
@@ -10,13 +9,17 @@ import {
   CircularProgress,
   Box,
   Theme,
+  Button,
+  Grid,
+  IconButton,
 } from '@mui/material';
 import {
   Medication,
-  MoreOutlined,
   PushPinOutlined,
   CheckCircleOutline,
   ErrorOutline,
+  CancelOutlined,
+  Battery0BarOutlined,
 } from '@mui/icons-material';
 import debounce from 'lodash.debounce';
 
@@ -59,7 +62,7 @@ export interface MedicationCardProps {
 
 const iconMap: { [index: string]: (props: SvgIconProps) => JSX.Element } = {
   INSULIN: Medication,
-  TEST_STRIP: MoreOutlined,
+  TEST_STRIP: Battery0BarOutlined,
   NEEDLE: PushPinOutlined,
 };
 
@@ -89,6 +92,7 @@ const MedicationCard = ({
   handleUpdate,
 }: MedicationCardProps) => {
   const [totalAmount, setTotalAmount] = useState<number>(amount);
+  const [changeAmount, setChangeAmount] = useState<number>(0);
   const debouncedUpdate = useCallback(debounce(handleUpdate, 1000), []);
   const textInput = useRef<HTMLInputElement>(null);
   const { updateMedication } = useUpdateMedication();
@@ -99,20 +103,33 @@ const MedicationCard = ({
     }
   }, [totalAmount]);
 
-  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) =>
+  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
     event.target.select();
+  };
 
   const handleExpand = () => {
     setExpanded(medicationId, expanded);
   };
 
-  const handleAmountChange = (value: number, operator: OperatorType) => {
-    if (operator === 'ADD') {
-      setTotalAmount(totalAmount + value);
-    } else {
-      const subtractedAmount = totalAmount - value;
-      setTotalAmount(subtractedAmount < 0 ? 0 : subtractedAmount);
+  const handleButtonClick = () => {
+    let updatedTotal = 0;
+
+    if (changeAmount > 0) {
+      updatedTotal = totalAmount + changeAmount;
     }
+    if (changeAmount < 0) {
+      const minusAmout = totalAmount - changeAmount * -1;
+      updatedTotal = minusAmout < 0 ? 0 : minusAmout;
+    }
+
+    setTotalAmount(updatedTotal);
+    setChangeAmount(0);
+  };
+
+  const handleAmountChange = (value: number, operator: OperatorType) => {
+    setChangeAmount(
+      operator === 'ADD' ? changeAmount + value : changeAmount - value
+    );
   };
 
   const updateSelectDefault = (index: number) => {
@@ -129,6 +146,9 @@ const MedicationCard = ({
     }
   };
 
+  const buttonLabel = changeAmount > 0 ? 'Add' : 'Remove';
+  const buttonAmount = changeAmount < 0 ? changeAmount * -1 : changeAmount;
+
   return (
     <Accordion expanded={expanded} elevation={1}>
       <AccordionSummary
@@ -138,70 +158,73 @@ const MedicationCard = ({
           },
         }}
       >
-        <Stack
-          direction="row"
-          spacing={2}
-          alignItems="center"
-          sx={{ width: '70%', flexShrink: 0, margin: 'auto 0' }}
-          role="button"
-          onClick={handleExpand}
-        >
-          {getIcon(icon)}
-          <Typography>{name}</Typography>
-        </Stack>
-        <Stack
-          direction="row"
-          spacing={1}
-          justifyContent="flex-end"
-          sx={{ width: '30%', flexShrink: 0, margin: 'auto 0' }}
-        >
-          {updateError && (
-            <ErrorOutline
-              aria-label="An error has occurred"
-              color="error"
-              sx={{ margin: 'auto' }}
+        <Grid container>
+          <Grid item xs onClick={handleExpand} role="button">
+            <Grid
+              container
+              paddingRight={1}
+              columnSpacing={1}
+              alignItems="center"
+              height="100%"
+            >
+              <Grid item height="24px">
+                {getIcon(icon)}
+              </Grid>
+              <Grid item xs>
+                <Typography>{name}</Typography>
+              </Grid>
+              <Grid item height="24px">
+                {updateError && (
+                  <ErrorOutline
+                    aria-label="An error has occurred"
+                    color="error"
+                    sx={{ margin: 'auto' }}
+                  />
+                )}
+                {updateSubmitting && !updateError && (
+                  <Box m="auto" pt="5px" aria-label="Submitting">
+                    <CircularProgress color="inherit" size={20} />
+                  </Box>
+                )}
+                {updateSuccess && !updateError && !updateSubmitting && (
+                  <CheckCircleOutline
+                    aria-label="Successfully updated"
+                    color="success"
+                    sx={{ margin: 'auto' }}
+                  />
+                )}
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item>
+            <TextField
+              variant="filled"
+              inputRef={textInput}
+              value={totalAmount}
+              onFocus={handleFocus}
+              aria-label="quantity"
+              onChange={(e) => {
+                if (!isNaN(Number(e.target.value))) {
+                  setTotalAmount(Number(e.target.value));
+                }
+              }}
+              onKeyDown={handleKeydown}
+              sx={{ width: 55 }}
+              InputProps={{
+                hiddenLabel: true,
+                disableUnderline: true,
+              }}
+              inputProps={{
+                inputMode: 'numeric',
+                sx: {
+                  textAlign: 'center',
+                  backgroundColor: (theme: Theme) =>
+                    theme.palette.background.default,
+                },
+              }}
             />
-          )}
-          {updateSubmitting && !updateError && (
-            <Box m="auto" pt="5px" aria-label="Submitting">
-              <CircularProgress color="inherit" size={20} />
-            </Box>
-          )}
-          {updateSuccess && !updateError && !updateSubmitting && (
-            <CheckCircleOutline
-              aria-label="Successfully updated"
-              color="success"
-              sx={{ margin: 'auto' }}
-            />
-          )}
-
-          <TextField
-            variant="filled"
-            inputRef={textInput}
-            value={totalAmount}
-            onFocus={handleFocus}
-            aria-label="quantity"
-            onChange={(e) => {
-              if (!isNaN(Number(e.target.value))) {
-                setTotalAmount(Number(e.target.value));
-              }
-            }}
-            onKeyDown={handleKeydown}
-            sx={{ width: 55 }}
-            InputProps={{
-              hiddenLabel: true,
-              disableUnderline: true,
-            }}
-            inputProps={{
-              inputMode: 'numeric',
-              sx: {
-                textAlign: 'center',
-                backgroundColor: (theme: Theme) =>
-                  theme.palette.background.default,
-              },
-            }}
-          />
-        </Stack>
+          </Grid>
+        </Grid>
       </AccordionSummary>
       <AccordionDetails>
         <NumberIncrementer
@@ -211,8 +234,33 @@ const MedicationCard = ({
           decrement={{ callback: handleAmountChange }}
           onSelectChange={updateSelectDefault}
         />
+        {changeAmount !== 0 && (
+          <Box p={2}>
+            <Grid container columnGap={2}>
+              <Grid item xs>
+                <Button
+                  size="large"
+                  variant="contained"
+                  fullWidth
+                  onClick={handleButtonClick}
+                >
+                  {`${buttonLabel} ${buttonAmount}`}
+                </Button>
+              </Grid>
+              <Grid item>
+                <IconButton
+                  sx={{ opacity: '0.5' }}
+                  aria-label="Cancel change"
+                  onClick={() => setChangeAmount(0)}
+                >
+                  <CancelOutlined />
+                </IconButton>
+              </Grid>
+            </Grid>
+          </Box>
+        )}
         {updated && timeSinceUpdate && (
-          <Box textAlign="right" pt={2}>
+          <Box textAlign="right" pt={changeAmount ? 0 : 2}>
             <Timestamp date={new Date(updated)} timeLapsed={timeSinceUpdate} />
           </Box>
         )}

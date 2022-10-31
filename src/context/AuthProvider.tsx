@@ -1,4 +1,6 @@
 import { createContext, useState } from 'react';
+import { useCookies } from 'react-cookie';
+import { addDays, addHours } from 'date-fns';
 import apiClient from '../api/client';
 import { LoginInputs } from '../pages/Login';
 
@@ -22,12 +24,12 @@ interface AuthError {
   unauthorised: boolean;
 }
 
+const COOKIE = 'auth';
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [loggedIn, setLoggedIn] = useState(
-    sessionStorage.getItem('loggedIn') === 'true' || false
-  );
+  const [cookies, setCookie, removeCookie] = useCookies([COOKIE]);
+  const [loggedIn, setLoggedIn] = useState(cookies[COOKIE] || false);
   const [loading, setLoading] = useState<boolean>(false);
   const [authError, setAuthError] = useState<AuthError>({
     expired: false,
@@ -49,14 +51,20 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         .post('/login', {
           email: data.email,
           password: data.password,
+          remember: data.rememberMe,
         })
         .then((response) => {
           if (response.status === 204) {
             setLoggedIn(true);
-            sessionStorage.setItem('loggedIn', 'true');
+            setCookie(COOKIE, 'loggedIn', {
+              expires: data.rememberMe
+                ? addDays(new Date(), 31)
+                : addHours(new Date(), 3),
+            });
           }
         })
         .catch((error) => {
+          console.log({ authError: error });
           if (error.response && error.response.status === 422) {
             setAuthError({
               expired: false,
@@ -82,7 +90,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         .then((response) => {
           if (response.status === 204) {
             setLoggedIn(false);
-            sessionStorage.setItem('loggedIn', 'false');
+            removeCookie(COOKIE);
           }
         })
         .catch((err) => setLogoutError(true))

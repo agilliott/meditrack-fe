@@ -24,6 +24,7 @@ const Tracker = () => {
   const [expanded, setExpanded] = useState<ExpandedCard | null>(null);
   const [isNextLimit, setIsNextLimit] = useState<boolean>(false);
   const [isPrevLimit, setIsPrevLimit] = useState<boolean>(false);
+  const [dataTransforming, setDataTransforming] = useState<boolean>(true);
   const [medicationsForTheWeek, setMedicationsForTheWeek] =
     useState<WeekData | null>(null);
   const [medicationsForToday, setMedicationsForToday] = useState<
@@ -51,7 +52,6 @@ const Tracker = () => {
       (med) => med.user_medication_id === medicationId
     );
 
-    // handle if no meds found or no id
     if (updatedMedication) {
       if (id) {
         updateMedicationLog({
@@ -107,6 +107,7 @@ const Tracker = () => {
 
   useEffect(() => {
     if (medicationsForTheWeek?.[selectedDay]) {
+      setDataTransforming(true);
       setMedicationsForToday(medicationsForTheWeek[selectedDay]);
 
       if (!expanded?.[selectedDay]) {
@@ -116,6 +117,7 @@ const Tracker = () => {
         });
         setExpanded({ ...expanded, ...expandedStatus });
       }
+      setDataTransforming(false);
     }
   }, [medicationsForTheWeek, selectedDay, medicationsForToday]);
 
@@ -134,6 +136,19 @@ const Tracker = () => {
     }
   }, [response, selectedDay]);
 
+  if (error) {
+    return (
+      <Grid item xs={12} textAlign="center" sx={{ marginTop: '30vh' }}>
+        <Box>
+          <ErrorOutline fontSize="large" />
+        </Box>
+        <Typography variant="caption">
+          There has been a problem loading medications
+        </Typography>
+      </Grid>
+    );
+  }
+
   return (
     <>
       <Box
@@ -143,6 +158,7 @@ const Tracker = () => {
         position="fixed"
         zIndex={1}
         p={2}
+        pb={1}
         sx={{
           backgroundColor: (theme) => theme.palette.background.paper,
         }}
@@ -159,27 +175,26 @@ const Tracker = () => {
         container
         spacing={2}
         padding={2}
-        mt="50px"
+        mt="55px"
         mb={isDateToday ? '55px' : '120px'}
       >
-        {loading && !error && (
-          <Grid item xs={12}>
-            <Skeleton height={120} />
-            <Skeleton height={120} />
-            <Skeleton height={120} />
-          </Grid>
+        {(loading || dataTransforming) && (
+          <>
+            <Grid item xs={12}>
+              <Skeleton height={80} sx={{ transform: 'none' }} />
+            </Grid>
+            <Grid item xs={12}>
+              <Skeleton height={80} sx={{ transform: 'none' }} />
+            </Grid>
+            <Grid item xs={12}>
+              <Skeleton height={80} sx={{ transform: 'none' }} />
+            </Grid>
+            <Grid item xs={12}>
+              <Skeleton height={80} sx={{ transform: 'none' }} />
+            </Grid>
+          </>
         )}
-        {error && (
-          <Grid item xs={12} textAlign="center" sx={{ marginTop: '30vh' }}>
-            <Box>
-              <ErrorOutline fontSize="large" />
-            </Box>
-            <Typography variant="caption">
-              There has been a problem loading medications
-            </Typography>
-          </Grid>
-        )}
-        {!medicationsForToday && !loading && !error && (
+        {!medicationsForToday && (
           <Grid item xs={12} textAlign="center" sx={{ marginTop: '30vh' }}>
             <Box>
               <Vaccines fontSize="large" />
@@ -189,9 +204,7 @@ const Tracker = () => {
             </Typography>
           </Grid>
         )}
-        {!loading &&
-          !error &&
-          medicationsForToday &&
+        {medicationsForToday &&
           medicationsForToday.map((item) => (
             <Grid
               item
@@ -230,14 +243,16 @@ const Tracker = () => {
           ))}
         {!isDateToday && (
           <Grid item xs={12}>
-            <Fab
-              onClick={skipToTodayClick}
-              color="primary"
-              aria-label="Skip to today"
-              sx={{ position: 'fixed', bottom: '70px', right: '20px' }}
-            >
-              <LastPage />
-            </Fab>
+            <Box sx={{ float: 'right', width: 56 }}>
+              <Fab
+                onClick={skipToTodayClick}
+                color="primary"
+                aria-label="Skip to today"
+                sx={{ position: 'fixed', bottom: '70px' }}
+              >
+                <LastPage />
+              </Fab>
+            </Box>
           </Grid>
         )}
       </Grid>

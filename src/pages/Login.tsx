@@ -9,14 +9,18 @@ import {
   Button,
   Box,
   Alert,
+  Checkbox,
+  FormControlLabel,
 } from '@mui/material';
 
+import logo from '../assets/logo.png';
 import useAuth from '../hooks/useAuth';
 import { PATH_TRACKER } from '../routing/routes';
 
 export type LoginInputs = {
   email: string;
   password: string;
+  rememberMe: boolean;
 };
 
 const Login = () => {
@@ -49,7 +53,14 @@ const Login = () => {
     >
       <Grid item>
         <Card elevation={3} sx={{ maxWidth: '400px' }}>
-          <Box p={3} textAlign="center">
+          <Box p={3} mt={2} textAlign="center">
+            <img
+              src={logo}
+              alt="Meditrack"
+              loading="lazy"
+              height={96}
+              width={96}
+            />
             <Typography variant="h1">Meditrack</Typography>
             <Typography variant="subtitle2">
               Log into your Meditrack account.
@@ -100,6 +111,12 @@ const Login = () => {
                     helperText={!!errors?.password && 'Required'}
                     fullWidth
                     {...register('password', { required: true })}
+                  />
+                </Grid>
+                <Grid item xs={!2}>
+                  <FormControlLabel
+                    control={<Checkbox {...register('rememberMe')} />}
+                    label="Remember me"
                   />
                 </Grid>
 

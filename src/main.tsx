@@ -1,14 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { CookiesProvider } from 'react-cookie';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import './main.css';
 
 import {
   PATH_TRACKER,
   PATH_ANALYSE,
   PATH_MEDICATION,
   PATH_PROFILE,
+  PATH_LOGIN,
+  PATH_HOME,
 } from './routing/routes';
 import {
   Analyse,
@@ -17,6 +21,7 @@ import {
   Medication,
   Profile,
   Tracker,
+  Home,
 } from './pages';
 
 import { AuthProvider } from './context/AuthProvider';
@@ -29,6 +34,14 @@ const router = createBrowserRouter([
     element: <App />,
     errorElement: <ErrorPage />,
     children: [
+      {
+        path: '/',
+        element: <Home />,
+      },
+      {
+        path: PATH_HOME,
+        element: <Home />,
+      },
       {
         path: PATH_TRACKER,
         element: <Tracker />,
@@ -48,18 +61,20 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: 'login',
+    path: PATH_LOGIN,
     element: <Login />,
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <AuthProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <RouterProvider router={router} />
-      </ThemeProvider>
-    </AuthProvider>
+    <CookiesProvider>
+      <AuthProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <RouterProvider router={router} />
+        </ThemeProvider>
+      </AuthProvider>
+    </CookiesProvider>
   </React.StrictMode>
 );
