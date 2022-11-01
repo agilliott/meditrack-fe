@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Divider,
   Grid,
@@ -14,6 +15,7 @@ import {
 } from '@mui/icons-material';
 import { useFetchData } from '../hooks';
 import { MedicationCard } from '../components';
+import { PATH_ADD } from '../routing/routes';
 
 type Medication = {
   id: number;
@@ -101,9 +103,11 @@ const Medication = () => {
       </Grid>
       <Grid item xs={12} textAlign="center">
         <IconButton
+          component={Link}
           aria-label="Add medication"
           size="large"
           sx={{ opacity: 0.5 }}
+          to={PATH_ADD}
         >
           <AddCircleOutlineOutlined fontSize="large" />
         </IconButton>

@@ -13,6 +13,8 @@ import {
   PATH_PROFILE,
   PATH_LOGIN,
   PATH_HOME,
+  PATH_ADD_MEDICATION,
+  PATH_EDIT_MEDICATION,
 } from './routing/routes';
 import {
   Analyse,
@@ -57,6 +59,14 @@ const router = createBrowserRouter([
       {
         path: PATH_PROFILE,
         element: <Profile />,
+      },
+      {
+        path: PATH_ADD_MEDICATION,
+        element: <div>Add</div>,
+      },
+      {
+        path: PATH_EDIT_MEDICATION,
+        element: <div>Edit</div>,
       },
     ],
   },

@@ -7,7 +7,9 @@ import {
   Button,
 } from '@mui/material';
 import { SwapVert } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 import { getIcon } from '../utils/getIcon';
+import { getEditMedicationLink } from '../routing/routes';
 
 type MedicationCardProps = {
   id: number;
@@ -32,6 +34,7 @@ const MedicationCard = ({
   icon_key,
   increments,
   meta,
+  id,
 }: MedicationCardProps) => {
   return (
     <Card elevation={1}>
@@ -64,7 +67,13 @@ const MedicationCard = ({
               <Typography variant="subtitle2" sx={{ opacity: 0.5 }}>
                 Added: {new Date(meta.created_at).toLocaleDateString()}
               </Typography>
-              <Button color="primary" variant="outlined" size="large">
+              <Button
+                component={Link}
+                to={getEditMedicationLink(id)}
+                color="primary"
+                variant="outlined"
+                size="large"
+              >
                 Edit
               </Button>
             </Stack>
