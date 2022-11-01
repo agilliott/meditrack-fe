@@ -70,8 +70,8 @@ export default function useUpdateMedication() {
       'user_medication_id' in payload ? apiClient.put : apiClient.post;
     const updateUrl =
       'user_medication_id' in payload
-        ? `/medication/${payload.user_medication_id}`
-        : '/medication';
+        ? `/medications/${payload.user_medication_id}`
+        : '/medications';
 
     updateClient(updateUrl, payload, {
       signal: controllerRef.current?.signal,
