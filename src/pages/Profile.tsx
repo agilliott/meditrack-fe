@@ -21,7 +21,7 @@ const Profile = () => {
   return (
     <Grid container padding={2} spacing={2} alignContent="space-between">
       <Grid item xs={12}>
-        <Typography variant="h1" gutterBottom>
+        <Typography variant="h1" gutterBottom textAlign="center">
           Profile
         </Typography>
         <Divider />

@@ -1,6 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Divider, Grid, Typography, Box, Skeleton } from '@mui/material';
-import { Vaccines, ErrorOutline } from '@mui/icons-material';
+import {
+  Divider,
+  Grid,
+  Typography,
+  Box,
+  Skeleton,
+  IconButton,
+} from '@mui/material';
+import {
+  Vaccines,
+  ErrorOutline,
+  AddCircleOutlineOutlined,
+} from '@mui/icons-material';
 import { useFetchData } from '../hooks';
 import { MedicationCard } from '../components';
 
@@ -49,7 +60,7 @@ const Medication = () => {
   return (
     <Grid container padding={2} spacing={2}>
       <Grid item xs={12}>
-        <Typography variant="h1" gutterBottom>
+        <Typography variant="h1" gutterBottom textAlign="center">
           Medication
         </Typography>
         <Divider />
@@ -87,6 +98,15 @@ const Medication = () => {
             </Grid>
           ))}
         </Grid>
+      </Grid>
+      <Grid item xs={12} textAlign="center">
+        <IconButton
+          aria-label="Add medication"
+          size="large"
+          sx={{ opacity: 0.5 }}
+        >
+          <AddCircleOutlineOutlined fontSize="large" />
+        </IconButton>
       </Grid>
     </Grid>
   );
