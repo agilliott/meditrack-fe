@@ -25,9 +25,13 @@ function App() {
         height: '100%',
       }}
     >
-      <Grid container height="100%">
+      <Grid container height="100%" mb="55px">
         <Grid item xs={12}>
-          <Outlet />
+          <Grid container mb="55px" height="100%">
+            <Grid item xs={12}>
+              <Outlet />
+            </Grid>
+          </Grid>
         </Grid>
         <Grid item xs>
           <NavBar />

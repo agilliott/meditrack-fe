@@ -176,7 +176,7 @@ const Tracker = () => {
         spacing={2}
         padding={2}
         mt="55px"
-        mb={isDateToday ? '55px' : '120px'}
+        mb={isDateToday ? 'none' : '75px'}
       >
         {(loading || dataTransforming) && (
           <>
@@ -204,43 +204,42 @@ const Tracker = () => {
             </Typography>
           </Grid>
         )}
-        {medicationsForToday &&
-          medicationsForToday.map((item) => (
-            <Grid
-              item
-              xs={12}
-              key={item.id ? item.id : `${selectedDay}-${item.title}`}
-            >
-              <MedicationLogCard
-                name={item.title}
-                icon={{ name: item.icon_key, color: item.icon_colour }}
-                amount={item.quantity}
-                id={item.id}
-                medicationId={item.user_medication_id}
-                incrementSettings={{
-                  selectValues: item.increments,
-                  defaultSelectedValueIndex: item.default_increment_index || 0,
-                }}
-                expanded={
-                  expanded?.[selectedDay]?.[item.user_medication_id] || false
-                }
-                setExpanded={handleExpand}
-                updated={item.meta?.updated_at}
-                timeSinceUpdate={item.meta?.time_since_last_update}
-                updateError={
-                  updateError?.[selectedDay] === item.user_medication_id
-                }
-                updateSubmitting={
-                  submitting?.[selectedDay] === item.user_medication_id
-                }
-                updateSuccess={
-                  response?.[selectedDay]?.data?.user_medication_id ===
-                  item.user_medication_id
-                }
-                handleUpdate={handleMedicationUpdate}
-              />
-            </Grid>
-          ))}
+        {medicationsForToday?.map((item) => (
+          <Grid
+            item
+            xs={12}
+            key={item.id ? item.id : `${selectedDay}-${item.title}`}
+          >
+            <MedicationLogCard
+              name={item.title}
+              icon={{ name: item.icon_key, color: item.icon_colour }}
+              amount={item.quantity}
+              id={item.id}
+              medicationId={item.user_medication_id}
+              incrementSettings={{
+                selectValues: item.increments,
+                defaultSelectedValueIndex: item.default_increment_index || 0,
+              }}
+              expanded={
+                expanded?.[selectedDay]?.[item.user_medication_id] || false
+              }
+              setExpanded={handleExpand}
+              updated={item.meta?.updated_at}
+              timeSinceUpdate={item.meta?.time_since_last_update}
+              updateError={
+                updateError?.[selectedDay] === item.user_medication_id
+              }
+              updateSubmitting={
+                submitting?.[selectedDay] === item.user_medication_id
+              }
+              updateSuccess={
+                response?.[selectedDay]?.data?.user_medication_id ===
+                item.user_medication_id
+              }
+              handleUpdate={handleMedicationUpdate}
+            />
+          </Grid>
+        ))}
         {!isDateToday && (
           <Grid item xs={12}>
             <Box sx={{ float: 'right', width: 56 }}>
