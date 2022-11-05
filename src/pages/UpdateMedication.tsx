@@ -152,8 +152,6 @@ const UpdateMedication = ({ add }: UpdateMedicationProps) => {
     },
   });
 
-  console.log(errors);
-
   const onSubmit = (data: FormInput) => {
     const tranformedData = {
       title: data.title,
