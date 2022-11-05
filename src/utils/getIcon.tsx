@@ -5,9 +5,25 @@ import {
   Battery0BarOutlined,
 } from '@mui/icons-material';
 
+export type IconChoices = 'INSULIN' | 'TEST_STRIP' | 'NEEDLE';
+export type ColorChoices =
+  | 'red1'
+  | 'red2'
+  | 'blue1'
+  | 'blue2'
+  | 'green1'
+  | 'green2'
+  | 'yellow1'
+  | 'yellow2'
+  | 'purple1'
+  | 'purple2'
+  | 'orange1'
+  | 'orange2';
+
 export interface IconProps {
   name: string;
   color: string;
+  fontSize?: 'small' | 'inherit' | 'medium' | 'large' | undefined;
 }
 
 export const iconMap: {
@@ -18,11 +34,12 @@ export const iconMap: {
   NEEDLE: PushPinOutlined,
 };
 
-export const getIcon = (icon: IconProps) => {
-  const Component = iconMap[icon.name] || Medication;
+export const getIcon = ({ name, color, fontSize = 'medium' }: IconProps) => {
+  const Component = iconMap[name] || Medication;
   return (
     <Component
-      sx={{ color: (theme: any) => theme.palette.colorOptions[icon.color] }}
+      fontSize={fontSize}
+      sx={{ color: (theme: any) => theme.palette.colorOptions[color] }}
     />
   );
 };

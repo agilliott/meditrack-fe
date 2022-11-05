@@ -24,6 +24,7 @@ import {
   Profile,
   Tracker,
   Home,
+  UpdateMedication,
 } from './pages';
 
 import { AuthProvider } from './context/AuthProvider';
@@ -62,11 +63,11 @@ const router = createBrowserRouter([
       },
       {
         path: PATH_ADD_MEDICATION,
-        element: <div>Add</div>,
+        element: <UpdateMedication add />,
       },
       {
         path: PATH_EDIT_MEDICATION,
-        element: <div>Edit</div>,
+        element: <UpdateMedication />,
       },
     ],
   },

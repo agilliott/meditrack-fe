@@ -21,7 +21,7 @@ export interface CreateMedicationProps {
   increments: number[];
   default_increment_index: number;
   searchable: boolean;
-  measurements: string[];
+  measurements: string[][];
 }
 
 interface Medication {

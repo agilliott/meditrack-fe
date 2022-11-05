@@ -175,6 +175,7 @@ const MedicationCard = ({
           </Grid>
           <Grid item>
             <TextField
+              type="number"
               variant="filled"
               inputRef={textInput}
               value={totalAmount}
@@ -192,7 +193,8 @@ const MedicationCard = ({
                 disableUnderline: true,
               }}
               inputProps={{
-                inputMode: 'numeric',
+                step: '0.01',
+                inputMode: 'decimal',
                 sx: {
                   textAlign: 'center',
                   backgroundColor: (theme: Theme) =>

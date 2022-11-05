@@ -4,3 +4,4 @@ export { default as useUpdateMedicatonLog } from './useUpdateMedicatonLog';
 export * from './useUpdateMedicatonLog';
 export { default as useUpdateMedication } from './useUpdateMedication';
 export * from './useUpdateMedication';
+export { default as useDeleteMedication } from './useDeleteMedication';
