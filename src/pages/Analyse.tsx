@@ -4,7 +4,7 @@ const Analyse = () => {
   return (
     <Grid container padding={2} spacing={2}>
       <Grid item xs={12}>
-        <Typography variant="h1" gutterBottom>
+        <Typography variant="h1" gutterBottom textAlign="center">
           Analyse
         </Typography>
         <Divider />

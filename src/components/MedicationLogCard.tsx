@@ -5,7 +5,6 @@ import {
   AccordionSummary,
   Typography,
   TextField,
-  SvgIconProps,
   CircularProgress,
   Box,
   Theme,
@@ -14,27 +13,20 @@ import {
   IconButton,
 } from '@mui/material';
 import {
-  Medication,
-  PushPinOutlined,
   CheckCircleOutline,
   ErrorOutline,
   CancelOutlined,
-  Battery0BarOutlined,
 } from '@mui/icons-material';
 import debounce from 'lodash.debounce';
 
 import { useUpdateMedication } from '../hooks';
+import { getIcon, IconProps } from '../utils/getIcon';
 import NumberIncrementer, { OperatorType } from './NumberIncrementer';
 import Timestamp from './Timestamp';
 
-interface Icon {
-  name: string;
-  color: string;
-}
-
 export interface MedicationCardProps {
   name: string;
-  icon?: Icon;
+  icon?: IconProps;
   amount: number;
   id?: number;
   medicationId: number;
@@ -59,21 +51,6 @@ export interface MedicationCardProps {
   expanded: boolean;
   setExpanded: (medicationId: number, expandedStatus: boolean) => void;
 }
-
-const iconMap: { [index: string]: (props: SvgIconProps) => JSX.Element } = {
-  INSULIN: Medication,
-  TEST_STRIP: Battery0BarOutlined,
-  NEEDLE: PushPinOutlined,
-};
-
-const getIcon = (icon: Icon) => {
-  const Component = iconMap[icon.name] || Medication;
-  return (
-    <Component
-      sx={{ color: (theme: any) => theme.palette.colorOptions[icon.color] }}
-    />
-  );
-};
 
 const MedicationCard = ({
   name = 'Medication',
@@ -198,6 +175,7 @@ const MedicationCard = ({
           </Grid>
           <Grid item>
             <TextField
+              type="number"
               variant="filled"
               inputRef={textInput}
               value={totalAmount}
@@ -215,7 +193,8 @@ const MedicationCard = ({
                 disableUnderline: true,
               }}
               inputProps={{
-                inputMode: 'numeric',
+                step: '0.01',
+                inputMode: 'decimal',
                 sx: {
                   textAlign: 'center',
                   backgroundColor: (theme: Theme) =>

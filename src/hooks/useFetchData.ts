@@ -3,7 +3,7 @@ import { AxiosError } from 'axios';
 import apiClient from '../api/client';
 import useAuth from './useAuth';
 
-export default function useFetchData(url: string) {
+export default function useFetchData(url?: string) {
   const [data, setData] = useState<any | null>(null);
   const [error, setError] = useState<AxiosError | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -11,9 +11,10 @@ export default function useFetchData(url: string) {
   const { onLogout, handleSetAuthError } = useAuth();
 
   useEffect(() => {
-    if (!data) {
+    if (!data && url) {
       setLoading(true);
       setError(null);
+
       if (controllerRef.current) {
         controllerRef.current.abort();
       }

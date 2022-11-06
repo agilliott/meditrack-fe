@@ -46,10 +46,10 @@ const themeOptions: ThemeOptions = {
   typography: {
     fontFamily: '"Jost", "Roboto","Helvetica","Arial",sans-serif',
     h1: {
-      fontSize: '2.5rem',
+      fontSize: '2rem',
     },
     h2: {
-      fontSize: '2rem',
+      fontSize: '1.75rem',
     },
     h3: {
       fontSize: '1.5rem',

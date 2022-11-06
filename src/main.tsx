@@ -4,6 +4,9 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { CookiesProvider } from 'react-cookie';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { ToastContainer } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 import './main.css';
 
 import {
@@ -13,6 +16,8 @@ import {
   PATH_PROFILE,
   PATH_LOGIN,
   PATH_HOME,
+  PATH_ADD_MEDICATION,
+  PATH_EDIT_MEDICATION,
 } from './routing/routes';
 import {
   Analyse,
@@ -22,6 +27,7 @@ import {
   Profile,
   Tracker,
   Home,
+  UpdateMedication,
 } from './pages';
 
 import { AuthProvider } from './context/AuthProvider';
@@ -58,6 +64,14 @@ const router = createBrowserRouter([
         path: PATH_PROFILE,
         element: <Profile />,
       },
+      {
+        path: PATH_ADD_MEDICATION,
+        element: <UpdateMedication add />,
+      },
+      {
+        path: PATH_EDIT_MEDICATION,
+        element: <UpdateMedication />,
+      },
     ],
   },
   {
@@ -73,6 +87,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <RouterProvider router={router} />
+          <ToastContainer limit={1} autoClose={3000} closeButton={false} />
         </ThemeProvider>
       </AuthProvider>
     </CookiesProvider>

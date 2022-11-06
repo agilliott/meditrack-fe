@@ -2,6 +2,11 @@ import { useRef, useState } from 'react';
 import apiClient from '../api/client';
 import useAuth from './useAuth';
 
+export type Measurement = {
+  capacity: number;
+  unit: string;
+  order: number;
+};
 export interface UpdateMedicationProps {
   user_medication_id: number;
   medication_category_id?: number;
@@ -11,6 +16,7 @@ export interface UpdateMedicationProps {
   increments?: number[];
   default_increment_index?: number;
   searchable?: boolean;
+  measurements?: Measurement[];
 }
 
 export interface CreateMedicationProps {
@@ -21,7 +27,7 @@ export interface CreateMedicationProps {
   increments: number[];
   default_increment_index: number;
   searchable: boolean;
-  measurements: string[];
+  measurements: Measurement[];
 }
 
 interface Medication {
@@ -70,8 +76,8 @@ export default function useUpdateMedication() {
       'user_medication_id' in payload ? apiClient.put : apiClient.post;
     const updateUrl =
       'user_medication_id' in payload
-        ? `/medication/${payload.user_medication_id}`
-        : '/medication';
+        ? `/medications/${payload.user_medication_id}`
+        : '/medications';
 
     updateClient(updateUrl, payload, {
       signal: controllerRef.current?.signal,

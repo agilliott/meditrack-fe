@@ -1,5 +1,5 @@
 import { render, screen } from '../test/test-utils';
-import MedicationCard from './MedicationLogCard';
+import MedicationLogCard from './MedicationLogCard';
 
 const defaultProps = {
   name: 'My meds',
@@ -21,19 +21,17 @@ const defaultProps = {
   setExpanded: vi.fn(),
 };
 
-describe('<MedicationCard />', () => {
+describe('<MedicationLogCard />', () => {
   it('renders with default props', () => {
-    render(<MedicationCard {...defaultProps} />);
+    render(<MedicationLogCard {...defaultProps} />);
     expect(screen.getByText(defaultProps.name)).toBeInTheDocument();
-    expect(screen.getByRole('textbox')).toHaveValue(
-      defaultProps.amount.toString()
-    );
+    expect(screen.getByRole('spinbutton')).toHaveValue(defaultProps.amount);
   });
 
   it('executes expand function on click', async () => {
     const mockSetExpand = vi.fn();
     const { user } = render(
-      <MedicationCard {...defaultProps} setExpanded={mockSetExpand} />
+      <MedicationLogCard {...defaultProps} setExpanded={mockSetExpand} />
     );
     await user.click(
       screen.getByRole('button', { name: defaultProps.name, exact: false })
@@ -45,7 +43,7 @@ describe('<MedicationCard />', () => {
   });
 
   it('shows content when expand is TRUE', () => {
-    render(<MedicationCard {...defaultProps} />);
+    render(<MedicationLogCard {...defaultProps} />);
     expect(
       screen.getByRole('button', { name: /decrement/i })
     ).toBeInTheDocument();
@@ -55,7 +53,7 @@ describe('<MedicationCard />', () => {
   });
 
   it('shows last updated when it is passed in', () => {
-    render(<MedicationCard {...defaultProps} />);
+    render(<MedicationLogCard {...defaultProps} />);
     expect(
       screen.getByText(defaultProps.timeSinceUpdate, { exact: false })
     ).toBeInTheDocument();
@@ -67,7 +65,7 @@ describe('<MedicationCard />', () => {
       defaultSelectedValueIndex: 2,
     };
     render(
-      <MedicationCard
+      <MedicationLogCard
         {...defaultProps}
         incrementSettings={mockincrementSettings}
       />
@@ -91,42 +89,38 @@ describe('<MedicationCard />', () => {
   });
 
   it('shows success icon', () => {
-    render(<MedicationCard {...defaultProps} updateSuccess />);
+    render(<MedicationLogCard {...defaultProps} updateSuccess />);
 
     expect(screen.getByLabelText(/successfully updated/i)).toBeInTheDocument();
   });
 
   it('shows error icon', () => {
-    render(<MedicationCard {...defaultProps} updateError />);
+    render(<MedicationLogCard {...defaultProps} updateError />);
 
     expect(screen.getByLabelText(/an error has occurred/i)).toBeInTheDocument();
   });
 
   it('shows submitting icon', () => {
-    render(<MedicationCard {...defaultProps} updateSubmitting />);
+    render(<MedicationLogCard {...defaultProps} updateSubmitting />);
 
     expect(screen.getByLabelText(/submitting/i)).toBeInTheDocument();
   });
 
   it('updates the input value when typed', async () => {
-    const newAmount = '20';
-    const { user } = render(<MedicationCard {...defaultProps} />);
+    const newAmount = 20;
+    const { user } = render(<MedicationLogCard {...defaultProps} />);
 
-    expect(screen.getByRole('textbox')).toHaveValue(
-      defaultProps.amount.toString()
-    );
+    expect(screen.getByRole('spinbutton')).toHaveValue(defaultProps.amount);
 
-    await user.type(screen.getByRole('textbox'), newAmount);
+    await user.type(screen.getByRole('spinbutton'), newAmount.toString());
 
-    expect(screen.getByRole('textbox')).toHaveValue(newAmount);
+    expect(screen.getByRole('spinbutton')).toHaveValue(newAmount);
   });
 
   it('updates the input value when the increment is selected', async () => {
-    const { user } = render(<MedicationCard {...defaultProps} />);
+    const { user } = render(<MedicationLogCard {...defaultProps} />);
 
-    expect(screen.getByRole('textbox')).toHaveValue(
-      defaultProps.amount.toString()
-    );
+    expect(screen.getByRole('spinbutton')).toHaveValue(defaultProps.amount);
 
     await user.click(screen.getByRole('button', { name: /increment/i }));
 
@@ -138,7 +132,7 @@ describe('<MedicationCard />', () => {
         defaultProps.incrementSettings.defaultSelectedValueIndex
       ];
 
-    expect(screen.getByRole('textbox')).toHaveValue(newAmount.toString());
+    expect(screen.getByRole('spinbutton')).toHaveValue(newAmount);
     expect(
       screen.queryByRole('button', { name: /add 3/i })
     ).not.toBeInTheDocument();
@@ -157,33 +151,31 @@ describe('<MedicationCard />', () => {
     const nextAmount =
       newAmount - defaultProps.incrementSettings.selectValues[0];
 
-    expect(screen.getByRole('textbox')).toHaveValue(nextAmount.toString());
+    expect(screen.getByRole('spinbutton')).toHaveValue(nextAmount);
   });
 
   it('does not allow the amount to go below 0', async () => {
-    const { user } = render(<MedicationCard {...defaultProps} amount={1} />);
+    const { user } = render(<MedicationLogCard {...defaultProps} amount={1} />);
 
-    expect(screen.getByRole('textbox')).toHaveValue('1');
+    expect(screen.getByRole('spinbutton')).toHaveValue(1);
 
     await user.click(screen.getByRole('button', { name: /decrement/i }));
 
     await user.click(screen.getByRole('button', { name: /remove 3/i }));
 
-    expect(screen.getByRole('textbox')).toHaveValue('0');
+    expect(screen.getByRole('spinbutton')).toHaveValue(0);
   });
 
   it('still renders if no icons are passed in', () => {
-    render(<MedicationCard {...defaultProps} icon={undefined} />);
+    render(<MedicationLogCard {...defaultProps} icon={undefined} />);
 
     expect(screen.getByText(defaultProps.name)).toBeInTheDocument();
-    expect(screen.getByRole('textbox')).toHaveValue(
-      defaultProps.amount.toString()
-    );
+    expect(screen.getByRole('spinbutton')).toHaveValue(defaultProps.amount);
   });
 
   it('Blurs input on enter key press', async () => {
-    const { user } = render(<MedicationCard {...defaultProps} />);
-    const input = screen.getByRole('textbox');
+    const { user } = render(<MedicationLogCard {...defaultProps} />);
+    const input = screen.getByRole('spinbutton');
 
     await user.click(input);
 
