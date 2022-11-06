@@ -87,7 +87,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <RouterProvider router={router} />
-          <ToastContainer limit={1} autoClose={2500} />
+          <ToastContainer limit={1} autoClose={3000} closeButton={false} />
         </ThemeProvider>
       </AuthProvider>
     </CookiesProvider>

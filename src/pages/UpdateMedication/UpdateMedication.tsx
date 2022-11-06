@@ -8,17 +8,33 @@ import {
   useUpdateMedication,
   useDeleteMedication,
   useFetchData,
+  Measurement,
 } from '../../hooks';
 import { notifyError, notifySuccess } from '../../utils/toasts';
-import { FIELD_ICON_COLOUR, FIELD_ICON_KEY } from './consts';
 import { schema } from './validationSchema';
 import MedicationFormSkeleton from './Skeleton';
 import UpdateMedicationForm, { FormInput } from './Form';
+import {
+  FIELD_BASE_CAPACITY,
+  FIELD_BASE_UNIT,
+  FIELD_ICON_COLOUR,
+  FIELD_ICON_KEY,
+  FIELD_INCREMENT_1,
+  FIELD_INCREMENT_2,
+  FIELD_INCREMENT_3,
+  FIELD_SEARCHABLE,
+  FIELD_TITLE,
+} from './consts';
 
 interface UpdateMedicationProps {
   add?: boolean;
 }
 
+type FormMeasurement = {
+  order: number;
+  capacity: number;
+  unit: string;
+};
 export interface FormPayload {
   user_medication_id?: number;
   medication_category_id: number;
@@ -28,7 +44,7 @@ export interface FormPayload {
   increments: number[];
   default_increment_index: number;
   searchable: boolean;
-  measurements: string[][];
+  measurements: FormMeasurement[];
 }
 
 const UpdateMedication = ({ add = false }: UpdateMedicationProps) => {
@@ -54,17 +70,19 @@ const UpdateMedication = ({ add = false }: UpdateMedicationProps) => {
   const formMethods = useForm<FormInput>({
     resolver: yupResolver(schema),
     defaultValues: {
-      title: '',
-      icon_key: 'INSULIN',
-      icon_colour: 'red1',
-      increment_1: 1,
-      increment_2: 2,
-      increment_3: 5,
-      searchable: false,
+      [FIELD_TITLE]: '',
+      [FIELD_ICON_KEY]: 'INSULIN',
+      [FIELD_ICON_COLOUR]: 'red1',
+      [FIELD_INCREMENT_1]: 1,
+      [FIELD_INCREMENT_2]: 2,
+      [FIELD_INCREMENT_3]: 5,
+      [FIELD_SEARCHABLE]: false,
+      [FIELD_BASE_CAPACITY]: 1,
+      [FIELD_BASE_UNIT]: {},
     },
   });
 
-  const { reset, watch } = formMethods;
+  const { reset } = formMethods;
 
   const onSubmit = (data: FormInput) => {
     const tranformedData: FormPayload = {
@@ -74,12 +92,30 @@ const UpdateMedication = ({ add = false }: UpdateMedicationProps) => {
       searchable: data.searchable,
       default_increment_index: 0,
       medication_category_id: 1,
-      measurements: [[]],
+      measurements: [],
       increments: [data.increment_1, data.increment_2, data.increment_3],
     };
+
+    if (data?.measurements && data.base_capacity && data.base_unit) {
+      const measurementsPayload: Measurement[] = data.measurements.map(
+        (measure, index) => ({
+          capacity: Number(measure.capacity),
+          unit: measure.unit.value,
+          order: index + 1,
+        })
+      );
+      measurementsPayload.unshift({
+        capacity: data.base_capacity,
+        unit: data.base_unit.value,
+        order: 0,
+      });
+      tranformedData.measurements = measurementsPayload;
+    }
+
     if (medicationId) {
       tranformedData.user_medication_id = Number(medicationId);
     }
+
     updateMedication(tranformedData);
   };
 
@@ -88,9 +124,6 @@ const UpdateMedication = ({ add = false }: UpdateMedicationProps) => {
       deleteMedication({ medication_id: Number(medicationId) });
     }
   };
-
-  const watchedIconColor = watch(FIELD_ICON_COLOUR);
-  const watchedIconKey = watch(FIELD_ICON_KEY);
 
   const handleCancel = () => {
     navigate(`/${PATH_MEDICATION}`);
@@ -108,6 +141,7 @@ const UpdateMedication = ({ add = false }: UpdateMedicationProps) => {
         increment_2: increments[1],
         increment_3: increments[2],
         searchable,
+        base_capacity: 1,
       };
       reset(newDefaultValues);
     }
@@ -127,7 +161,7 @@ const UpdateMedication = ({ add = false }: UpdateMedicationProps) => {
     if (updateError || deleteError) {
       const addOrEdit = add ? 'add' : 'edit';
       notifyError({
-        message: `Could not ${updateResonse ? addOrEdit : 'delete'} medication`,
+        message: `Could not ${updateError ? addOrEdit : 'delete'} medication`,
       });
     }
   }, [updateError, deleteError]);
@@ -156,8 +190,6 @@ const UpdateMedication = ({ add = false }: UpdateMedicationProps) => {
         <UpdateMedicationForm
           add={add}
           onSubmit={onSubmit}
-          watchedIconColor={watchedIconColor}
-          watchedIconKey={watchedIconKey}
           updateSubmitting={!!updateSubmitting}
           deleteSubmitting={deleteSubmitting}
           onDelete={onDelete}

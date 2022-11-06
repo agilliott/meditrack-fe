@@ -7,6 +7,9 @@ import {
   FIELD_SEARCHABLE,
   FIELD_ICON_COLOUR,
   FIELD_ICON_KEY,
+  FIELD_BASE_CAPACITY,
+  FIELD_BASE_UNIT,
+  FIELD_ARRAY_MEASUREMENTS,
 } from './consts';
 
 export const schema = yup
@@ -42,5 +45,34 @@ export const schema = yup
     [FIELD_SEARCHABLE]: yup.boolean(),
     [FIELD_ICON_COLOUR]: yup.string().required(),
     [FIELD_ICON_KEY]: yup.string().required(),
+    [FIELD_BASE_CAPACITY]: yup.number().min(1).max(1),
+    [FIELD_BASE_UNIT]: yup
+      .object({
+        value: yup.string().required(),
+        label: yup.string().required(),
+        symbol: yup.string(),
+        group: yup.string().required(),
+      })
+      .nullable()
+      .test('hasMeasurements', 'Required for measurements', function (value) {
+        if (this.parent.measurements.length > 0 && !value) {
+          return false;
+        } else {
+          return true;
+        }
+      }),
+    [FIELD_ARRAY_MEASUREMENTS]: yup.array().of(
+      yup.object({
+        capacity: yup.number().min(0.01, 'Required').required(),
+        unit: yup
+          .object({
+            value: yup.string().required(),
+            label: yup.string().required(),
+            symbol: yup.string(),
+            group: yup.string().required(),
+          })
+          .required(),
+      })
+    ),
   })
   .required();

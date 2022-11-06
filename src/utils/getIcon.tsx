@@ -3,9 +3,27 @@ import {
   Medication,
   PushPinOutlined,
   Battery0BarOutlined,
+  Circle,
+  Grain,
+  CalendarViewMonth,
+  Thermostat,
+  DragIndicator,
+  FavoriteBorder,
+  RemoveCircleOutline,
 } from '@mui/icons-material';
 
-export type IconChoices = 'INSULIN' | 'TEST_STRIP' | 'NEEDLE';
+export type IconChoices =
+  | 'INSULIN'
+  | 'TEST_STRIP'
+  | 'NEEDLE'
+  | 'CIRCLE'
+  | 'PILL'
+  | 'PILLS_1'
+  | 'PILLS_2'
+  | 'THERMOMETER'
+  | 'BLISTER'
+  | 'HEART';
+
 export type ColorChoices =
   | 'red1'
   | 'red2'
@@ -22,7 +40,7 @@ export type ColorChoices =
 
 export interface IconProps {
   name: string;
-  color: string;
+  color?: string;
   fontSize?: 'small' | 'inherit' | 'medium' | 'large' | undefined;
 }
 
@@ -32,6 +50,13 @@ export const iconMap: {
   INSULIN: Medication,
   TEST_STRIP: Battery0BarOutlined,
   NEEDLE: PushPinOutlined,
+  CIRCLE: Circle,
+  PILL: RemoveCircleOutline,
+  PILLS_1: Grain,
+  PILLS_2: DragIndicator,
+  THERMOMETER: Thermostat,
+  BLISTER: CalendarViewMonth,
+  HEART: FavoriteBorder,
 };
 
 export const getIcon = ({ name, color, fontSize = 'medium' }: IconProps) => {
@@ -39,7 +64,12 @@ export const getIcon = ({ name, color, fontSize = 'medium' }: IconProps) => {
   return (
     <Component
       fontSize={fontSize}
-      sx={{ color: (theme: any) => theme.palette.colorOptions[color] }}
+      sx={{
+        color: (theme: any) =>
+          color
+            ? theme.palette.colorOptions[color]
+            : theme.palette.common.white,
+      }}
     />
   );
 };
