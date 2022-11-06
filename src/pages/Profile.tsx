@@ -1,8 +1,9 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Grid, Typography, Button, Divider, Alert } from '@mui/material';
+import { Grid, Typography, Button, Divider } from '@mui/material';
 import { PATH_LOGIN } from '../routing/routes';
 import useAuth from '../hooks/useAuth';
-import { useEffect } from 'react';
+import { notifyError } from '../utils/toasts';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -18,6 +19,12 @@ const Profile = () => {
     }
   }, [logoutError, loading, loggedIn]);
 
+  useEffect(() => {
+    if (logoutError) {
+      notifyError({ message: 'There was a problem logging out' });
+    }
+  }, [logoutError]);
+
   return (
     <Grid container padding={2} spacing={2} alignContent="space-between">
       <Grid item xs={12}>
@@ -27,15 +34,6 @@ const Profile = () => {
         <Divider />
       </Grid>
       <Grid item xs={12}>
-        {logoutError && (
-          <Alert
-            severity="error"
-            variant="filled"
-            sx={{ marginBottom: '20px' }}
-          >
-            There was a problem logging out
-          </Alert>
-        )}
         <Button fullWidth variant="outlined" onClick={handleLogout}>
           Log out
         </Button>

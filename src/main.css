@@ -1,5 +1,14 @@
 @import url(https://fonts.googleapis.com/css2?family=Jost);
 
 #root {
-    height: 100vh;
+  height: 100vh;
+}
+
+:root {
+  --toastify-color-light: #fff;
+  --toastify-color-dark: #121212;
+  --toastify-color-info: #0288d1;
+  --toastify-color-success: #2e7d32;
+  --toastify-color-warning: #ff9800;
+  --toastify-color-error: #f44336;
 }

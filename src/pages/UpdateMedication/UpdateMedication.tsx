@@ -1,7 +1,7 @@
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import {
   Grid,
   Typography,
@@ -14,7 +14,6 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
-  Alert,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import {
@@ -22,10 +21,25 @@ import {
   CheckCircleOutline,
   CancelOutlined,
 } from '@mui/icons-material';
-import { ColorChoices, IconChoices, getIcon } from '../utils/getIcon';
-import { useUpdateMedication, useDeleteMedication } from '../hooks';
-import { useEffect } from 'react';
-import { PATH_MEDICATION } from '../routing/routes';
+import { ColorChoices, IconChoices, getIcon } from '../../utils/getIcon';
+import { PATH_MEDICATION } from '../../routing/routes';
+import {
+  useUpdateMedication,
+  useDeleteMedication,
+  useFetchData,
+} from '../../hooks';
+import { notifyError, notifySuccess } from '../../utils/toasts';
+import {
+  FIELD_INCREMENT_1,
+  FIELD_INCREMENT_2,
+  FIELD_INCREMENT_3,
+  FIELD_TITLE,
+  FIELD_SEARCHABLE,
+  FIELD_ICON_COLOUR,
+  FIELD_ICON_KEY,
+} from './consts';
+import { schema } from './validationSchema';
+import MedicationFormSkeleton from './Skeleton';
 
 interface UpdateMedicationProps {
   add?: boolean;
@@ -71,54 +85,24 @@ const iconColors: SelectOptionsColor[] = [
   { key: 'orange2', label: 'Orange 2' },
 ];
 
-const FIELD_TITLE = 'title',
-  FIELD_SEARCHABLE = 'searchable',
-  FIELD_ICON_KEY = 'icon_key',
-  FIELD_ICON_COLOUR = 'icon_colour',
-  FIELD_INCREMENT_1 = 'increment_1',
-  FIELD_INCREMENT_2 = 'increment_2',
-  FIELD_INCREMENT_3 = 'increment_3';
-
-const schema = yup
-  .object({
-    [FIELD_TITLE]: yup.string().required(),
-    [FIELD_INCREMENT_1]: yup
-      .number()
-      .min(0.01)
-      .test('duplicate', 'Duplicate', function (value) {
-        return (
-          value !== this.parent.increment_2 && value !== this.parent.increment_3
-        );
-      })
-      .required(),
-    [FIELD_INCREMENT_2]: yup
-      .number()
-      .min(0.01)
-      .test('duplicate', 'Duplicate', function (value) {
-        return (
-          value !== this.parent.increment_1 && value !== this.parent.increment_3
-        );
-      })
-      .required(),
-    [FIELD_INCREMENT_3]: yup
-      .number()
-      .min(0.01)
-      .test('duplicate', 'Duplicate', function (value) {
-        return (
-          value !== this.parent.increment_1 && value !== this.parent.increment_2
-        );
-      })
-      .required(),
-    [FIELD_SEARCHABLE]: yup.boolean(),
-    [FIELD_ICON_COLOUR]: yup.string().required(),
-    [FIELD_ICON_KEY]: yup.string().required(),
-  })
-  .required();
+export interface FormPayload {
+  user_medication_id?: number;
+  medication_category_id: number;
+  title: string;
+  icon_key: string;
+  icon_colour: string;
+  increments: number[];
+  default_increment_index: number;
+  searchable: boolean;
+  measurements: string[][];
+}
 
 const UpdateMedication = ({ add }: UpdateMedicationProps) => {
   const pageType = add ? 'Add' : 'Edit';
   const navigate = useNavigate();
   const { medicationId } = useParams();
+  const fetchUrl = medicationId ? `medications/${medicationId}` : undefined;
+  const { data, error: fetchError } = useFetchData(fetchUrl);
 
   const {
     updateMedication,
@@ -138,6 +122,7 @@ const UpdateMedication = ({ add }: UpdateMedicationProps) => {
     handleSubmit,
     control,
     watch,
+    reset,
     formState: { errors },
   } = useForm<FormInput>({
     resolver: yupResolver(schema),
@@ -153,7 +138,7 @@ const UpdateMedication = ({ add }: UpdateMedicationProps) => {
   });
 
   const onSubmit = (data: FormInput) => {
-    const tranformedData = {
+    const tranformedData: FormPayload = {
       title: data.title,
       icon_key: data.icon_key,
       icon_colour: data.icon_colour,
@@ -163,6 +148,9 @@ const UpdateMedication = ({ add }: UpdateMedicationProps) => {
       measurements: [[]],
       increments: [data.increment_1, data.increment_2, data.increment_3],
     };
+    if (medicationId) {
+      tranformedData.user_medication_id = Number(medicationId);
+    }
     updateMedication(tranformedData);
   };
 
@@ -184,10 +172,52 @@ const UpdateMedication = ({ add }: UpdateMedicationProps) => {
   };
 
   useEffect(() => {
+    if (!add && data) {
+      const { title, icon_key, icon_colour, searchable, increments } =
+        data.data;
+      const newDefaultValues: FormInput = {
+        title,
+        icon_key,
+        icon_colour,
+        increment_1: increments[0],
+        increment_2: increments[1],
+        increment_3: increments[2],
+        searchable,
+      };
+      reset(newDefaultValues);
+    }
+  }, [data, add]);
+
+  useEffect(() => {
     if (updateResonse || deleteResponse) {
+      const addOrSave = add ? 'added' : 'saved';
       navigate(`/${PATH_MEDICATION}`);
+      notifySuccess({
+        message: `Medication ${updateResonse ? addOrSave : 'deleted'}`,
+      });
     }
   }, [updateResonse, deleteResponse]);
+
+  useEffect(() => {
+    if (updateError || deleteError) {
+      const addOrEdit = add ? 'add' : 'edit';
+      notifyError({
+        message: `Could not ${updateResonse ? addOrEdit : 'delete'} medication`,
+      });
+    }
+  }, [updateError, deleteError]);
+
+  useEffect(() => {
+    if (fetchError) {
+      notifyError({
+        message: `Could not fetch medication details`,
+      });
+    }
+  }, [fetchError]);
+
+  if (!add && !data) {
+    return <MedicationFormSkeleton pageType={pageType} />;
+  }
 
   return (
     <Grid container padding={2} spacing={3}>
@@ -197,13 +227,6 @@ const UpdateMedication = ({ add }: UpdateMedicationProps) => {
         </Typography>
         <Divider />
       </Grid>
-      {(updateError || deleteError) && (
-        <Grid item xs={12}>
-          <Alert severity="error" variant="filled">
-            Something went wrong {pageType.toLowerCase()}ing a medication
-          </Alert>
-        </Grid>
-      )}
       <Grid item xs={12}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2} rowGap={1}>
@@ -215,12 +238,20 @@ const UpdateMedication = ({ add }: UpdateMedicationProps) => {
               })}
             </Grid>
             <Grid item xs={10}>
-              <TextField
-                label="Name"
-                fullWidth
-                error={!!errors[FIELD_TITLE]}
-                helperText={errors[FIELD_TITLE] && errors[FIELD_TITLE].message}
-                {...register(FIELD_TITLE)}
+              <Controller
+                name={FIELD_TITLE}
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    label="Name"
+                    fullWidth
+                    error={!!errors[FIELD_TITLE]}
+                    helperText={
+                      errors[FIELD_TITLE] && errors[FIELD_TITLE].message
+                    }
+                    {...field}
+                  />
+                )}
               />
             </Grid>
             <Grid item xs={6}>
@@ -302,10 +333,15 @@ const UpdateMedication = ({ add }: UpdateMedicationProps) => {
               />
             </Grid>
             <Grid item xs={12}>
-              <FormControlLabel
-                control={<Checkbox />}
-                label="Show in global search list"
-                {...register(FIELD_SEARCHABLE)}
+              <Controller
+                name={FIELD_SEARCHABLE}
+                control={control}
+                render={({ field }) => (
+                  <FormControlLabel
+                    control={<Checkbox checked={field.value} {...field} />}
+                    label="Show in global search list"
+                  />
+                )}
               />
             </Grid>
             <Grid item xs={12}>

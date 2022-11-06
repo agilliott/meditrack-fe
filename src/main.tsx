@@ -4,6 +4,9 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { CookiesProvider } from 'react-cookie';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { ToastContainer } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 import './main.css';
 
 import {
@@ -84,6 +87,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <RouterProvider router={router} />
+          <ToastContainer limit={1} autoClose={2500} />
         </ThemeProvider>
       </AuthProvider>
     </CookiesProvider>
