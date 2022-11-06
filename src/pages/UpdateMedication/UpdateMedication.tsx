@@ -1,27 +1,8 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  Grid,
-  Typography,
-  Divider,
-  TextField,
-  Checkbox,
-  FormControlLabel,
-  Button,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
-} from '@mui/material';
-import LoadingButton from '@mui/lab/LoadingButton';
-import {
-  DeleteOutline,
-  CheckCircleOutline,
-  CancelOutlined,
-} from '@mui/icons-material';
-import { ColorChoices, IconChoices, getIcon } from '../../utils/getIcon';
+import { Grid, Typography, Divider } from '@mui/material';
 import { PATH_MEDICATION } from '../../routing/routes';
 import {
   useUpdateMedication,
@@ -29,61 +10,14 @@ import {
   useFetchData,
 } from '../../hooks';
 import { notifyError, notifySuccess } from '../../utils/toasts';
-import {
-  FIELD_INCREMENT_1,
-  FIELD_INCREMENT_2,
-  FIELD_INCREMENT_3,
-  FIELD_TITLE,
-  FIELD_SEARCHABLE,
-  FIELD_ICON_COLOUR,
-  FIELD_ICON_KEY,
-} from './consts';
+import { FIELD_ICON_COLOUR, FIELD_ICON_KEY } from './consts';
 import { schema } from './validationSchema';
 import MedicationFormSkeleton from './Skeleton';
+import UpdateMedicationForm, { FormInput } from './Form';
 
 interface UpdateMedicationProps {
   add?: boolean;
 }
-
-interface FormInput {
-  title: string;
-  searchable: boolean;
-  icon_key: IconChoices;
-  icon_colour: ColorChoices;
-  increment_1: number;
-  increment_2: number;
-  increment_3: number;
-}
-
-type SelectOptionsKey = {
-  key: IconChoices;
-  label: string;
-};
-
-type SelectOptionsColor = {
-  key: ColorChoices;
-  label: string;
-};
-
-const iconKeys: SelectOptionsKey[] = [
-  { key: 'INSULIN', label: 'Insulin' },
-  { key: 'TEST_STRIP', label: 'Test Strip' },
-  { key: 'NEEDLE', label: 'Needle' },
-];
-const iconColors: SelectOptionsColor[] = [
-  { key: 'red1', label: 'Red 1' },
-  { key: 'red2', label: 'Red 2' },
-  { key: 'blue1', label: 'Blue 1' },
-  { key: 'blue2', label: 'Blue 2' },
-  { key: 'green1', label: 'Green 1' },
-  { key: 'green2', label: 'Green 2' },
-  { key: 'yellow1', label: 'Yellow 1' },
-  { key: 'yellow2', label: 'Yellow 2' },
-  { key: 'purple1', label: 'Purple 1' },
-  { key: 'purple2', label: 'Purple 2' },
-  { key: 'orange1', label: 'Orange 1' },
-  { key: 'orange2', label: 'Orange 2' },
-];
 
 export interface FormPayload {
   user_medication_id?: number;
@@ -97,7 +31,7 @@ export interface FormPayload {
   measurements: string[][];
 }
 
-const UpdateMedication = ({ add }: UpdateMedicationProps) => {
+const UpdateMedication = ({ add = false }: UpdateMedicationProps) => {
   const pageType = add ? 'Add' : 'Edit';
   const navigate = useNavigate();
   const { medicationId } = useParams();
@@ -117,14 +51,7 @@ const UpdateMedication = ({ add }: UpdateMedicationProps) => {
     submitting: deleteSubmitting,
   } = useDeleteMedication();
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-    reset,
-    formState: { errors },
-  } = useForm<FormInput>({
+  const formMethods = useForm<FormInput>({
     resolver: yupResolver(schema),
     defaultValues: {
       title: '',
@@ -136,6 +63,8 @@ const UpdateMedication = ({ add }: UpdateMedicationProps) => {
       searchable: false,
     },
   });
+
+  const { reset, watch } = formMethods;
 
   const onSubmit = (data: FormInput) => {
     const tranformedData: FormPayload = {
@@ -165,10 +94,6 @@ const UpdateMedication = ({ add }: UpdateMedicationProps) => {
 
   const handleCancel = () => {
     navigate(`/${PATH_MEDICATION}`);
-  };
-
-  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
-    event.target.select();
   };
 
   useEffect(() => {
@@ -228,162 +153,17 @@ const UpdateMedication = ({ add }: UpdateMedicationProps) => {
         <Divider />
       </Grid>
       <Grid item xs={12}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={2} rowGap={1}>
-            <Grid item xs={2} m="auto" textAlign="center">
-              {getIcon({
-                color: watchedIconColor,
-                name: watchedIconKey,
-                fontSize: 'large',
-              })}
-            </Grid>
-            <Grid item xs={10}>
-              <Controller
-                name={FIELD_TITLE}
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    label="Name"
-                    fullWidth
-                    error={!!errors[FIELD_TITLE]}
-                    helperText={
-                      errors[FIELD_TITLE] && errors[FIELD_TITLE].message
-                    }
-                    {...field}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <FormControl fullWidth error={!!errors[FIELD_ICON_KEY]}>
-                <InputLabel id="icon_key-label">Icon</InputLabel>
-                <Controller
-                  name={FIELD_ICON_KEY}
-                  control={control}
-                  render={({ field }) => (
-                    <Select id="icon_key-label" label="Icon" {...field}>
-                      {iconKeys.map(({ key, label }) => (
-                        <MenuItem key={key} value={key}>
-                          {label}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  )}
-                />
-              </FormControl>
-            </Grid>
-            <Grid item xs={6}>
-              <FormControl fullWidth error={!!errors[FIELD_ICON_COLOUR]}>
-                <InputLabel id="icon_colour-label">Colour</InputLabel>
-                <Controller
-                  name={FIELD_ICON_COLOUR}
-                  control={control}
-                  render={({ field }) => (
-                    <Select id="icon_colour-label" label="Colour" {...field}>
-                      {iconColors.map(({ key, label }) => (
-                        <MenuItem key={key} value={key}>
-                          {label}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  )}
-                />
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography variant="h6">Increment values</Typography>
-            </Grid>
-            <Grid item xs={4}>
-              <TextField
-                label="Value 1"
-                type="number"
-                inputProps={{ step: '.01' }}
-                onFocus={handleFocus}
-                helperText={
-                  errors[FIELD_INCREMENT_1] && errors[FIELD_INCREMENT_1].message
-                }
-                error={!!errors[FIELD_INCREMENT_1]}
-                {...register(FIELD_INCREMENT_1)}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TextField
-                label="Value 2"
-                type="number"
-                inputProps={{ step: '.01' }}
-                onFocus={handleFocus}
-                helperText={
-                  errors[FIELD_INCREMENT_2] && errors[FIELD_INCREMENT_2].message
-                }
-                error={!!errors[FIELD_INCREMENT_2]}
-                {...register(FIELD_INCREMENT_2)}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TextField
-                label="Value 3"
-                type="number"
-                inputProps={{ step: '.01' }}
-                onFocus={handleFocus}
-                helperText={
-                  errors[FIELD_INCREMENT_3] && errors[FIELD_INCREMENT_3].message
-                }
-                error={!!errors[FIELD_INCREMENT_3]}
-                {...register(FIELD_INCREMENT_3)}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Controller
-                name={FIELD_SEARCHABLE}
-                control={control}
-                render={({ field }) => (
-                  <FormControlLabel
-                    control={<Checkbox checked={field.value} {...field} />}
-                    label="Show in global search list"
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <LoadingButton
-                loading={!!updateSubmitting}
-                size="large"
-                fullWidth
-                variant="contained"
-                type="submit"
-                startIcon={<CheckCircleOutline />}
-              >
-                {add ? 'Add' : 'Save'} Medication
-              </LoadingButton>
-            </Grid>
-            {!add && (
-              <Grid item xs={6}>
-                <LoadingButton
-                  loading={!!deleteSubmitting}
-                  size="large"
-                  color="error"
-                  variant="outlined"
-                  fullWidth
-                  onClick={onDelete}
-                  startIcon={<DeleteOutline />}
-                >
-                  Delete
-                </LoadingButton>
-              </Grid>
-            )}
-            <Grid item xs={add ? 12 : 6}>
-              <Button
-                size="large"
-                variant="outlined"
-                fullWidth
-                onClick={handleCancel}
-                startIcon={<CancelOutlined />}
-              >
-                Cancel
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
+        <UpdateMedicationForm
+          add={add}
+          onSubmit={onSubmit}
+          watchedIconColor={watchedIconColor}
+          watchedIconKey={watchedIconKey}
+          updateSubmitting={!!updateSubmitting}
+          deleteSubmitting={deleteSubmitting}
+          onDelete={onDelete}
+          handleCancel={handleCancel}
+          formMethods={formMethods}
+        />
       </Grid>
     </Grid>
   );
