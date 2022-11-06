@@ -21,7 +21,7 @@ describe('<MedicationCard />', () => {
   it('renders with default props', () => {
     render(<MedicationCard {...defaultProps} />);
     expect(screen.getByText(defaultProps.title)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /edit/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /edit/i })).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: /Reorder/i })
     ).toBeInTheDocument();

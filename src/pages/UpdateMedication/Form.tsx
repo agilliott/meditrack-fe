@@ -12,7 +12,6 @@ import {
   FormControl,
   Autocomplete,
   IconButton,
-  Menu,
   Divider,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -21,7 +20,6 @@ import {
   CheckCircleOutline,
   CancelOutlined,
   AddCircleOutline,
-  SwapVert,
 } from '@mui/icons-material';
 
 import { getIcon } from '../../utils/getIcon';
